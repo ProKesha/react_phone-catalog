@@ -2,7 +2,9 @@ import { useCallback } from 'react';
 
 import { getProducts } from '../shared/api/apiClient';
 import { useAsync } from '../shared/hooks/useAsync';
+import { ProductsList } from '../shared/components/ProductsList';
 import type { ProductCategory } from '../shared/types/product';
+import styles from './ProductsPage.module.scss';
 
 type Props = {
   category: ProductCategory;
@@ -26,14 +28,18 @@ export const ProductsPage = ({ category }: Props) => {
   const { data: products, loading, error, reload } = useAsync(fetchByCategory);
 
   if (loading) {
-    return <div>Loading {TITLES[category]}...</div>;
+    return (
+      <div className={styles.page}>
+        <p className={styles.status}>Loading {TITLES[category]}...</p>
+      </div>
+    );
   }
 
   if (error) {
     return (
-      <div>
-        <p>Something went wrong: {error}</p>
-        <button type="button" onClick={reload}>
+      <div className={styles.page}>
+        <p className={styles.status}>Something went wrong: {error}</p>
+        <button type="button" onClick={reload} className={styles.reloadBtn}>
           Try again
         </button>
       </div>
@@ -41,20 +47,10 @@ export const ProductsPage = ({ category }: Props) => {
   }
 
   return (
-    <>
-      <h1>{TITLES[category]}</h1>
-      <p>
-        {products?.length ?? 0} {TITLES[category].toLowerCase()} found
-      </p>
-
-      {/* Temporary wiring check — replaced in Step 5 */}
-      <ul>
-        {products?.slice(0, 10).map(product => (
-          <li key={product.id}>
-            {product.name} — ${product.price}
-          </li>
-        ))}
-      </ul>
-    </>
+    <div className={styles.page}>
+      <h1 className={styles.title}>{TITLES[category]}</h1>
+      <p className={styles.count}>{products?.length ?? 0} models</p>
+      <ProductsList products={products ?? []} />
+    </div>
   );
 };
