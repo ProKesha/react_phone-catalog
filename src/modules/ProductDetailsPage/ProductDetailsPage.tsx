@@ -55,7 +55,7 @@ export const ProductDetailsPage = () => {
   const category = product.category;
 
   const handleBack = () => {
-    if (window.history.length > 1) {
+    if (window.history.state?.idx > 0) {
       navigate(-1);
     } else {
       navigate(`/${category}`);
