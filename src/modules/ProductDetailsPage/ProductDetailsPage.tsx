@@ -54,17 +54,13 @@ export const ProductDetailsPage = () => {
 
   const category = product.category;
 
-  const handleBack = () => {
-    if (window.history.state?.idx > 0) {
-      navigate(-1);
-    } else {
-      navigate(`/${category}`);
-    }
-  };
-
   return (
     <div className={styles.page}>
-      <button type="button" className={styles.backBtn} onClick={handleBack}>
+      <button
+        type="button"
+        className={styles.backBtn}
+        onClick={() => navigate(-1)}
+      >
         ← Back
       </button>
 
