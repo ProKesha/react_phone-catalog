@@ -40,7 +40,6 @@ export const getSuggestedProducts = async (
     p => p.category === category && p.itemId !== currentId,
   );
 
-  // Fisher-Yates shuffle for unbiased randomness
   const shuffled = [...pool];
 
   for (let i = shuffled.length - 1; i > 0; i -= 1) {
