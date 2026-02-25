@@ -1,12 +1,20 @@
 import { useCallback } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { getProductDetails, getProducts } from '../shared/api/apiClient';
 import { useAsync } from '../shared/hooks/useAsync';
 import type { ProductDetails } from '../shared/types/productDetails';
+import styles from './ProductDetailsPage.module.scss';
+
+const CATEGORY_LABELS: Record<string, string> = {
+  phones: 'Phones',
+  tablets: 'Tablets',
+  accessories: 'Accessories',
+};
 
 export const ProductDetailsPage = () => {
   const { productId = '' } = useParams();
+  const navigate = useNavigate();
 
   const fetchDetails = useCallback(async (): Promise<ProductDetails | null> => {
     if (!productId) {
@@ -44,5 +52,31 @@ export const ProductDetailsPage = () => {
     return <p>Product was not found</p>;
   }
 
-  return <h1>{product.name}</h1>;
+  const category = product.category;
+
+  return (
+    <div className={styles.page}>
+      <button
+        type="button"
+        className={styles.backBtn}
+        onClick={() => navigate(-1)}
+      >
+        ← Back
+      </button>
+
+      <nav aria-label="Breadcrumb" className={styles.breadcrumb}>
+        <Link to="/" className={styles.breadcrumbLink}>
+          Home
+        </Link>
+        <span className={styles.breadcrumbSep}>/</span>
+        <Link to={`/${category}`} className={styles.breadcrumbLink}>
+          {CATEGORY_LABELS[category] ?? category}
+        </Link>
+        <span className={styles.breadcrumbSep}>/</span>
+        <span className={styles.breadcrumbCurrent}>{product.name}</span>
+      </nav>
+
+      <h1 className={styles.title}>{product.name}</h1>
+    </div>
+  );
 };
