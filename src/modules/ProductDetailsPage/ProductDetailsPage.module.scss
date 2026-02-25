@@ -1,0 +1,53 @@
+.page {
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  padding: 40px 16px 80px;
+}
+
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-secondary);
+  margin-bottom: 24px;
+  transition: color var(--transition-base);
+
+  &:hover {
+    color: var(--color-primary);
+  }
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  margin-bottom: 16px;
+}
+
+.breadcrumbLink {
+  color: var(--color-secondary);
+  transition: color var(--transition-base);
+
+  &:hover {
+    color: var(--color-primary);
+  }
+}
+
+.breadcrumbSep {
+  color: var(--color-secondary);
+}
+
+.breadcrumbCurrent {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--color-primary);
+  margin-bottom: 32px;
+}
