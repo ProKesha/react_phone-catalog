@@ -40,7 +40,7 @@ export const ProductDetailsPage = () => {
   if (error) {
     return (
       <>
-        <p>Something went wrong: {error}</p>
+        <p>Something went wrong: {String(error)}</p>
         <button type="button" onClick={reload}>
           Try again
         </button>
@@ -54,13 +54,17 @@ export const ProductDetailsPage = () => {
 
   const category = product.category;
 
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate(`/${category}`);
+    }
+  };
+
   return (
     <div className={styles.page}>
-      <button
-        type="button"
-        className={styles.backBtn}
-        onClick={() => navigate(-1)}
-      >
+      <button type="button" className={styles.backBtn} onClick={handleBack}>
         ← Back
       </button>
 
