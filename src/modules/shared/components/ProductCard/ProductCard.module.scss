@@ -150,3 +150,12 @@
     border-color: var(--color-primary);
   }
 }
+
+.favoriteButtonActive {
+  color: var(--color-red);
+  border-color: var(--color-red);
+
+  svg {
+    fill: currentColor;
+  }
+}

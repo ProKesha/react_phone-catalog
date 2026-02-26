@@ -1,6 +1,7 @@
 import cn from 'classnames';
 import { NavLink } from 'react-router-dom';
 
+import { useFavorites } from '../../context';
 import styles from './Header.module.scss';
 
 type NavLinkState = { isActive: boolean };
@@ -25,66 +26,73 @@ const HEART_PATH =
   '.273-.32C8.992 2.127 10.04 1.6 11.2 1.6 13.314 1.6 15 ' +
   '5.333 15 9.545 8 14 8 14Z';
 
-export const Header = () => (
-  <header className={styles.header}>
-    <div className={styles.inner}>
-      <div className={styles.left}>
-        <NavLink to="/" className={styles.logo} aria-label="Go to home page">
-          <span className={styles.logoText}>Nice Gadgets</span>
-        </NavLink>
+export const Header = () => {
+  const { favoritesCount } = useFavorites();
 
-        <nav className={styles.nav}>
-          {NAV_LINKS.map(({ path, label, end }) => (
-            <NavLink key={path} to={path} end={end} className={getNavClass}>
-              {label}
-            </NavLink>
-          ))}
-        </nav>
-      </div>
+  return (
+    <header className={styles.header}>
+      <div className={styles.inner}>
+        <div className={styles.left}>
+          <NavLink to="/" className={styles.logo} aria-label="Go to home page">
+            <span className={styles.logoText}>Nice Gadgets</span>
+          </NavLink>
 
-      <div className={styles.actions}>
-        <NavLink
-          to="/favorites"
-          className={getIconClass}
-          aria-label="Favorites"
-        >
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 16 16"
-            fill="none"
-            aria-hidden="true"
+          <nav className={styles.nav}>
+            {NAV_LINKS.map(({ path, label, end }) => (
+              <NavLink key={path} to={path} end={end} className={getNavClass}>
+                {label}
+              </NavLink>
+            ))}
+          </nav>
+        </div>
+
+        <div className={styles.actions}>
+          <NavLink
+            to="/favorites"
+            className={getIconClass}
+            aria-label="Favorites"
           >
-            <path
-              d={HEART_PATH}
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </NavLink>
+            {favoritesCount > 0 && (
+              <span className={styles.badge}>{favoritesCount}</span>
+            )}
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 16 16"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path
+                d={HEART_PATH}
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </NavLink>
 
-        <NavLink to="/cart" className={getIconClass} aria-label="Cart">
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 16 16"
-            fill="none"
-            aria-hidden="true"
-          >
-            <path
-              d="M2 1h1.5l1.8 8h7.4l1.3-5H4.5"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <circle cx="6.5" cy="12.5" r="1" fill="currentColor" />
-            <circle cx="11.5" cy="12.5" r="1" fill="currentColor" />
-          </svg>
-        </NavLink>
+          <NavLink to="/cart" className={getIconClass} aria-label="Cart">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 16 16"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M2 1h1.5l1.8 8h7.4l1.3-5H4.5"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <circle cx="6.5" cy="12.5" r="1" fill="currentColor" />
+              <circle cx="11.5" cy="12.5" r="1" fill="currentColor" />
+            </svg>
+          </NavLink>
+        </div>
       </div>
-    </div>
-  </header>
-);
+    </header>
+  );
+};

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 
 import type { Product } from '../../types/product';
+import { useFavorites } from '../../context';
 import styles from './ProductCard.module.scss';
 
 // Extracted to comply with max-len: 80 lint rule
@@ -30,6 +31,7 @@ export const ProductCard = ({ product }: Props) => {
   const { itemId, name, image, price, fullPrice, screen, capacity, ram } =
     product;
 
+  const { isFavorite, toggle } = useFavorites();
   const hasDiscount = fullPrice > price;
 
   return (
@@ -71,8 +73,13 @@ export const ProductCard = ({ product }: Props) => {
 
         <button
           type="button"
-          className={styles.favoriteButton}
+          className={
+            isFavorite(itemId)
+              ? `${styles.favoriteButton} ${styles.favoriteButtonActive}`
+              : styles.favoriteButton
+          }
           aria-label={`Add ${name} to favorites`}
+          onClick={() => toggle(itemId)}
         >
           <svg
             width="16"
