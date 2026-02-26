@@ -1,43 +1,93 @@
+import { useMemo } from 'react';
+
+import { getProducts } from '../shared/api/apiClient';
+import { Loader } from '../shared/components/Loader';
 import { PicturesSlider } from '../shared/components/PicturesSlider';
+import { ProductsSlider } from '../shared/components/ProductsSlider';
 import { ShopByCategory } from '../shared/components/ShopByCategory';
+import { useAsync } from '../shared/hooks/useAsync';
 import styles from './HomePage.module.scss';
 
-export const HomePage = () => (
-  <div className={styles.page}>
-    <h1 className="visually-hidden">Product Catalog</h1>
+export const HomePage = () => {
+  const { data: products, loading, error, reload } = useAsync(getProducts);
 
-    {/* ── 1. Pictures slider ───────────────────────────────────────────── */}
-    <section className={styles.picturesSlider} aria-label="Featured products">
-      <PicturesSlider />
-    </section>
+  const hotPriceProducts = useMemo(() => {
+    if (!products) {
+      return [];
+    }
 
-    <div className={styles.container}>
-      {/* ── 2. Hot prices ──────────────────────────────────────────────── */}
-      <section className={styles.section} aria-labelledby="hot-prices-title">
-        <h2 id="hot-prices-title" className={styles.sectionTitle}>
-          Hot prices
-        </h2>
+    return [...products]
+      .sort((a, b) => b.fullPrice - b.price - (a.fullPrice - a.price))
+      .slice(0, 16);
+  }, [products]);
 
-        {/* ProductsSlider — hot prices */}
+  const brandNewProducts = useMemo(() => {
+    if (!products) {
+      return [];
+    }
+
+    return [...products].sort((a, b) => b.year - a.year).slice(0, 16);
+  }, [products]);
+
+  return (
+    <div className={styles.page}>
+      <h1 className="visually-hidden">Product Catalog</h1>
+
+      <section className={styles.picturesSlider} aria-label="Featured products">
+        <PicturesSlider />
       </section>
 
-      {/* ── 3. Shop by category ────────────────────────────────────────── */}
-      <section className={styles.section} aria-labelledby="categories-title">
-        <h2 id="categories-title" className={styles.sectionTitle}>
-          Shop by category
-        </h2>
+      <div className={styles.container}>
+        <section className={styles.section} aria-labelledby="hot-prices-title">
+          {loading && <Loader />}
 
-        <ShopByCategory />
-      </section>
+          {error && (
+            <p className={styles.error}>
+              {error}{' '}
+              <button type="button" onClick={reload}>
+                Try again
+              </button>
+            </p>
+          )}
 
-      {/* ── 4. Brand new ───────────────────────────────────────────────── */}
-      <section className={styles.section} aria-labelledby="brand-new-title">
-        <h2 id="brand-new-title" className={styles.sectionTitle}>
-          Brand new
-        </h2>
+          {!loading && !error && (
+            <ProductsSlider
+              title="Hot prices"
+              titleId="hot-prices-title"
+              products={hotPriceProducts}
+            />
+          )}
+        </section>
 
-        {/* ProductsSlider — brand new */}
-      </section>
+        <section className={styles.section} aria-labelledby="categories-title">
+          <h2 id="categories-title" className={styles.sectionTitle}>
+            Shop by category
+          </h2>
+
+          <ShopByCategory />
+        </section>
+
+        <section className={styles.section} aria-labelledby="brand-new-title">
+          {loading && <Loader />}
+
+          {error && (
+            <p className={styles.error}>
+              {error}{' '}
+              <button type="button" onClick={reload}>
+                Try again
+              </button>
+            </p>
+          )}
+
+          {!loading && !error && (
+            <ProductsSlider
+              title="Brand new"
+              titleId="brand-new-title"
+              products={brandNewProducts}
+            />
+          )}
+        </section>
+      </div>
     </div>
-  </div>
-);
+  );
+};
