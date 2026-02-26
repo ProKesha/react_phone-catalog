@@ -52,6 +52,71 @@
   margin-bottom: 32px;
 }
 
+.selectors {
+  margin-bottom: 32px;
+}
+
+.selectorGroup {
+  margin-bottom: 24px;
+}
+
+.selectorLabel {
+  font-size: 12px;
+  color: var(--color-secondary);
+  margin-bottom: 8px;
+}
+
+.colorList {
+  display: flex;
+  gap: 8px;
+}
+
+.colorBtn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--color-bg);
+  box-shadow: 0 0 0 1px var(--color-border);
+  transition: box-shadow var(--transition-base);
+
+  &:hover {
+    box-shadow: 0 0 0 1px var(--color-secondary);
+  }
+}
+
+.colorBtnActive {
+  box-shadow: 0 0 0 2px var(--color-primary);
+}
+
+.capacityList {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.capacityBtn {
+  padding: 8px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-primary);
+  transition:
+    border-color var(--transition-base),
+    background-color var(--transition-base),
+    color var(--transition-base);
+
+  &:hover {
+    border-color: var(--color-primary);
+  }
+}
+
+.capacityBtnActive {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  border-color: var(--color-primary);
+}
+
 .gallery {
   display: flex;
   gap: 16px;

@@ -13,6 +13,28 @@ const CATEGORY_LABELS: Record<string, string> = {
   accessories: 'Accessories',
 };
 
+const COLOR_MAP: Record<string, string> = {
+  midnight: '#1F2020',
+  starlight: '#F2E8D9',
+  purple: '#B9A2C7',
+  yellow: '#FAE04C',
+  green: '#3D6B54',
+  blue: '#276787',
+  red: '#BF0000',
+  black: '#1B1B1B',
+  white: '#F5F5F0',
+  pink: '#F9C0BB',
+  spaceblack: '#403E3D',
+  spacegray: '#57595D',
+  silver: '#CBCBCB',
+  gold: '#F9E4C8',
+  graphite: '#54524F',
+  sierrablue: '#A7C1D9',
+  alpinegreen: '#576856',
+  skyblue: '#8AB4C8',
+  rosegold: '#E8BCAC',
+};
+
 export const ProductDetailsPage = () => {
   const { productId = '' } = useParams();
   const navigate = useNavigate();
@@ -35,10 +57,14 @@ export const ProductDetailsPage = () => {
   const { data: product, loading, error, reload } = useAsync(fetchDetails);
 
   const [activeImage, setActiveImage] = useState('');
+  const [selectedColor, setSelectedColor] = useState('');
+  const [selectedCapacity, setSelectedCapacity] = useState('');
 
   useEffect(() => {
     if (product) {
       setActiveImage(product.images[0]);
+      setSelectedColor(product.colorsAvailable[0]);
+      setSelectedCapacity(product.capacityAvailable[0]);
     }
   }, [product]);
 
@@ -90,6 +116,52 @@ export const ProductDetailsPage = () => {
       </nav>
 
       <h1 className={styles.title}>{product.name}</h1>
+
+      <div className={styles.selectors}>
+        <div className={styles.selectorGroup}>
+          <p className={styles.selectorLabel}>Available colors</p>
+          <ul className={styles.colorList}>
+            {product.colorsAvailable.map(color => (
+              <li key={color}>
+                <button
+                  type="button"
+                  aria-label={color}
+                  className={
+                    color === selectedColor
+                      ? `${styles.colorBtn} ${styles.colorBtnActive}`
+                      : styles.colorBtn
+                  }
+                  style={{
+                    backgroundColor: COLOR_MAP[color] ?? '#ccc',
+                  }}
+                  onClick={() => setSelectedColor(color)}
+                />
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className={styles.selectorGroup}>
+          <p className={styles.selectorLabel}>Select capacity</p>
+          <ul className={styles.capacityList}>
+            {product.capacityAvailable.map(cap => (
+              <li key={cap}>
+                <button
+                  type="button"
+                  className={
+                    cap === selectedCapacity
+                      ? `${styles.capacityBtn} ${styles.capacityBtnActive}`
+                      : styles.capacityBtn
+                  }
+                  onClick={() => setSelectedCapacity(cap)}
+                >
+                  {cap}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
 
       <div className={styles.gallery}>
         <ul className={styles.thumbnails}>
