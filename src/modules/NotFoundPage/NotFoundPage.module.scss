@@ -24,14 +24,14 @@
   align-items: center;
   padding: 12px 32px;
   background-color: var(--color-primary);
-  color: var(--color-white);
+  color: var(--color-bg);
   font-size: 14px;
   font-weight: 700;
   letter-spacing: 0.4px;
   border-radius: 2px;
-  transition: background-color var(--transition-base);
+  transition: opacity var(--transition-base);
 
   &:hover {
-    background-color: var(--color-hover, #3a3a3a);
+    opacity: 0.8;
   }
 }
