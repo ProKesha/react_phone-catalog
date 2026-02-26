@@ -186,6 +186,20 @@ export const ProductDetailsPage = () => {
           <img src={activeImage || product.images[0]} alt={product.name} />
         </div>
       </div>
+
+      <section className={styles.about}>
+        <h2 className={styles.aboutTitle}>About</h2>
+        {product.description.map(section => (
+          <div key={section.title} className={styles.aboutSection}>
+            <h3 className={styles.aboutSectionTitle}>{section.title}</h3>
+            {section.text.map(paragraph => (
+              <p key={paragraph} className={styles.aboutText}>
+                {paragraph}
+              </p>
+            ))}
+          </div>
+        ))}
+      </section>
     </div>
   );
 };
