@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { getProductDetails, getProducts } from '../shared/api/apiClient';
 import { useAsync } from '../shared/hooks/useAsync';
+import { Loader } from '../shared/components/Loader';
 import type { ProductDetails } from '../shared/types/productDetails';
 import styles from './ProductDetailsPage.module.scss';
 
@@ -34,7 +35,7 @@ export const ProductDetailsPage = () => {
   const { data: product, loading, error, reload } = useAsync(fetchDetails);
 
   if (loading) {
-    return <p>Loading...</p>;
+    return <Loader />;
   }
 
   if (error) {
