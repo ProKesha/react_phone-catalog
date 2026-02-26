@@ -1,7 +1,7 @@
 import cn from 'classnames';
 import { NavLink } from 'react-router-dom';
 
-import { useFavorites } from '../../context';
+import { useCart, useFavorites } from '../../context';
 import styles from './Header.module.scss';
 
 type NavLinkState = { isActive: boolean };
@@ -28,6 +28,8 @@ const HEART_PATH =
 
 export const Header = () => {
   const { favoritesCount } = useFavorites();
+  const { getTotalQuantity } = useCart();
+  const cartCount = getTotalQuantity();
 
   return (
     <header className={styles.header}>
@@ -73,6 +75,7 @@ export const Header = () => {
           </NavLink>
 
           <NavLink to="/cart" className={getIconClass} aria-label="Cart">
+            {cartCount > 0 && <span className={styles.badge}>{cartCount}</span>}
             <svg
               width="16"
               height="16"
