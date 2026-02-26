@@ -15,7 +15,18 @@ type CartRow = {
 };
 
 export const CartPage = () => {
-  const { cart, getTotalQuantity, increment, decrement, remove } = useCart();
+  const { cart, getTotalQuantity, increment, decrement, remove, clear } =
+    useCart();
+
+  const handleCheckout = () => {
+    const confirmed = window.confirm(
+      'Checkout is not implemented yet. Do you want to clear the Cart?',
+    );
+
+    if (confirmed) {
+      clear();
+    }
+  };
 
   const { data: products, loading, error, reload } = useAsync(getProducts);
 
@@ -145,7 +156,11 @@ export const CartPage = () => {
 
           <hr className={styles.summaryDivider} />
 
-          <button type="button" className={styles.checkoutBtn}>
+          <button
+            type="button"
+            className={styles.checkoutBtn}
+            onClick={handleCheckout}
+          >
             Checkout
           </button>
         </div>
