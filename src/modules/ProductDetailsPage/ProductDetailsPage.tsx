@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import { getProductDetails, getProducts } from '../shared/api/apiClient';
@@ -33,6 +33,14 @@ export const ProductDetailsPage = () => {
   }, [productId]);
 
   const { data: product, loading, error, reload } = useAsync(fetchDetails);
+
+  const [activeImage, setActiveImage] = useState('');
+
+  useEffect(() => {
+    if (product) {
+      setActiveImage(product.images[0]);
+    }
+  }, [product]);
 
   if (loading) {
     return <Loader />;
@@ -82,6 +90,30 @@ export const ProductDetailsPage = () => {
       </nav>
 
       <h1 className={styles.title}>{product.name}</h1>
+
+      <div className={styles.gallery}>
+        <ul className={styles.thumbnails}>
+          {product.images.map(img => (
+            <li key={img}>
+              <button
+                type="button"
+                className={
+                  img === activeImage
+                    ? `${styles.thumbBtn} ${styles.thumbBtnActive}`
+                    : styles.thumbBtn
+                }
+                onClick={() => setActiveImage(img)}
+              >
+                <img src={img} alt={product.name} />
+              </button>
+            </li>
+          ))}
+        </ul>
+
+        <div className={styles.mainImage}>
+          <img src={activeImage || product.images[0]} alt={product.name} />
+        </div>
+      </div>
     </div>
   );
 };
