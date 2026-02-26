@@ -1,3 +1,4 @@
+import { PicturesSlider } from '../shared/components/PicturesSlider';
 import styles from './HomePage.module.scss';
 
 export const HomePage = () => (
@@ -6,7 +7,7 @@ export const HomePage = () => (
 
     {/* ── 1. Pictures slider ───────────────────────────────────────────── */}
     <section className={styles.picturesSlider} aria-label="Featured products">
-      {/* PicturesSlider component */}
+      <PicturesSlider />
     </section>
 
     <div className={styles.container}>
