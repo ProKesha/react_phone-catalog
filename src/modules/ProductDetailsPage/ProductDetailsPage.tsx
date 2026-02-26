@@ -200,6 +200,27 @@ export const ProductDetailsPage = () => {
           </div>
         ))}
       </section>
+
+      <section className={styles.techSpecs}>
+        <h2 className={styles.techSpecsTitle}>Tech specs</h2>
+        {[
+          { label: 'Screen', value: product.screen },
+          { label: 'Resolution', value: product.resolution },
+          { label: 'Processor', value: product.processor },
+          { label: 'RAM', value: product.ram },
+          { label: 'Capacity', value: product.capacity },
+          ...(product.camera
+            ? [{ label: 'Camera', value: product.camera }]
+            : []),
+          ...(product.zoom ? [{ label: 'Zoom', value: product.zoom }] : []),
+          { label: 'Cell', value: product.cell.join(', ') },
+        ].map(({ label, value }) => (
+          <div key={label} className={styles.specRow}>
+            <span className={styles.specLabel}>{label}</span>
+            <span className={styles.specValue}>{value}</span>
+          </div>
+        ))}
+      </section>
     </div>
   );
 };
