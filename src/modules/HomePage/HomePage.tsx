@@ -1,4 +1,5 @@
 import { PicturesSlider } from '../shared/components/PicturesSlider';
+import { ShopByCategory } from '../shared/components/ShopByCategory';
 import styles from './HomePage.module.scss';
 
 export const HomePage = () => (
@@ -26,7 +27,7 @@ export const HomePage = () => (
           Shop by category
         </h2>
 
-        {/* ShopByCategory component */}
+        <ShopByCategory />
       </section>
 
       {/* ── 4. Brand new ───────────────────────────────────────────────── */}
