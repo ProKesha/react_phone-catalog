@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 
 import type { Product } from '../../types/product';
-import { useFavorites } from '../../context';
+import { useCart, useFavorites } from '../../context';
 import styles from './ProductCard.module.scss';
 
 // Extracted to comply with max-len: 80 lint rule
@@ -32,6 +32,7 @@ export const ProductCard = ({ product }: Props) => {
     product;
 
   const { isFavorite, toggle } = useFavorites();
+  const { isInCart, add } = useCart();
   const hasDiscount = fullPrice > price;
 
   return (
@@ -67,8 +68,17 @@ export const ProductCard = ({ product }: Props) => {
       </div>
 
       <div className={styles.actions}>
-        <button type="button" className={styles.cartButton}>
-          Add to cart
+        <button
+          type="button"
+          className={
+            isInCart(itemId)
+              ? `${styles.cartButton} ${styles.cartButtonAdded}`
+              : styles.cartButton
+          }
+          disabled={isInCart(itemId)}
+          onClick={() => add(itemId)}
+        >
+          {isInCart(itemId) ? 'Added to cart' : 'Add to cart'}
         </button>
 
         <button

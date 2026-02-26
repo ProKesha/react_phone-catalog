@@ -134,6 +134,13 @@
   }
 }
 
+.cartButtonAdded {
+  background-color: transparent;
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+  cursor: default;
+}
+
 .favoriteButton {
   display: flex;
   align-items: center;
