@@ -1,9 +1,14 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
-import { getProductDetails, getProducts } from '../shared/api/apiClient';
+import {
+  getProductDetails,
+  getProducts,
+  getSuggestedProducts,
+} from '../shared/api/apiClient';
 import { useAsync } from '../shared/hooks/useAsync';
 import { Loader } from '../shared/components/Loader';
+import { ProductCard } from '../shared/components/ProductCard';
 import type { ProductDetails } from '../shared/types/productDetails';
 import styles from './ProductDetailsPage.module.scss';
 
@@ -55,6 +60,17 @@ export const ProductDetailsPage = () => {
   }, [productId]);
 
   const { data: product, loading, error, reload } = useAsync(fetchDetails);
+
+  const fetchSuggested = useCallback(async () => {
+    if (!product) {
+      return [];
+    }
+
+    return getSuggestedProducts(productId, product.category);
+  }, [product, productId]);
+
+  const { data: suggested, loading: suggestedLoading } =
+    useAsync(fetchSuggested);
 
   const [activeImage, setActiveImage] = useState('');
   const [selectedColor, setSelectedColor] = useState('');
@@ -220,6 +236,20 @@ export const ProductDetailsPage = () => {
             <span className={styles.specValue}>{value}</span>
           </div>
         ))}
+      </section>
+
+      <section className={styles.suggested}>
+        <h2 className={styles.suggestedTitle}>You may also like</h2>
+        {suggestedLoading && <Loader />}
+        {!suggestedLoading && suggested && (
+          <ul className={styles.suggestedList}>
+            {suggested.map(item => (
+              <li key={item.itemId} className={styles.suggestedItem}>
+                <ProductCard product={item} />
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
     </div>
   );
