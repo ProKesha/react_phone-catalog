@@ -32,6 +32,12 @@
   border-radius: 8px;
 }
 
+.noResults {
+  font-size: 16px;
+  color: var(--color-secondary);
+  padding: 40px 0;
+}
+
 // ─── Controls (sort + per page) ───────────────────────────────────────────────
 .controls {
   display: flex;
