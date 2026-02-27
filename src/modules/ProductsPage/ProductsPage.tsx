@@ -75,7 +75,7 @@ export const ProductsPage = ({ category }: Props) => {
 
   const perPage: PerPage = VALID_PER_PAGE.includes(rawPerPage as PerPage)
     ? (rawPerPage as PerPage)
-    : 'all';
+    : '16';
 
   const page = Math.max(1, Number(rawPage) || 1);
   const query = rawQuery ?? '';
@@ -87,10 +87,19 @@ export const ProductsPage = ({ category }: Props) => {
 
   const { data: products, loading, error, reload } = useAsync(fetchByCategory);
 
-  const sorted = useMemo(
-    () => sortProducts(products ?? [], sort),
-    [products, sort],
-  );
+  const filtered = useMemo(() => {
+    const all = products ?? [];
+
+    if (!query) {
+      return all;
+    }
+
+    const q = query.toLowerCase();
+
+    return all.filter(p => p.name.toLowerCase().includes(q));
+  }, [products, query]);
+
+  const sorted = useMemo(() => sortProducts(filtered, sort), [filtered, sort]);
 
   const totalItems = sorted.length;
 
@@ -131,7 +140,7 @@ export const ProductsPage = ({ category }: Props) => {
   // Оновлює URL-параметри з дотриманням правил чистоти URL:
   // - query порожній → видалити
   // - sort = 'age' (default) → видалити
-  // - perPage = 'all' (default) → видалити
+  // - perPage = '16' (default) → видалити; 'all' — зберігати явно
   // - page = 1 → видалити
   // - зміна query/sort/perPage → скинути page
   const setParams = (update: ParamsUpdate) => {
@@ -155,7 +164,7 @@ export const ProductsPage = ({ category }: Props) => {
       }
 
       if ('perPage' in update) {
-        if (!update.perPage || update.perPage === 'all') {
+        if (!update.perPage || update.perPage === '16') {
           next.delete('perPage');
         } else {
           next.set('perPage', update.perPage);
@@ -179,7 +188,7 @@ export const ProductsPage = ({ category }: Props) => {
       }
 
       // perPage=all → пагінація непотрібна
-      if (!next.has('perPage')) {
+      if (next.get('perPage') === 'all') {
         next.delete('page');
       }
 
