@@ -15,6 +15,14 @@ type Props = {
   category: ProductCategory;
 };
 
+// Частковий апдейт URL-параметрів
+type ParamsUpdate = {
+  query?: string;
+  sort?: SortKey;
+  perPage?: PerPage;
+  page?: number;
+};
+
 const TITLES: Record<ProductCategory, string> = {
   phones: 'Phones',
   tablets: 'Tablets',
@@ -59,6 +67,7 @@ export const ProductsPage = ({ category }: Props) => {
   const rawSort = searchParams.get('sort');
   const rawPerPage = searchParams.get('perPage');
   const rawPage = searchParams.get('page');
+  const rawQuery = searchParams.get('query');
 
   const sort: SortKey = VALID_SORT.includes(rawSort as SortKey)
     ? (rawSort as SortKey)
@@ -66,9 +75,10 @@ export const ProductsPage = ({ category }: Props) => {
 
   const perPage: PerPage = VALID_PER_PAGE.includes(rawPerPage as PerPage)
     ? (rawPerPage as PerPage)
-    : 'all';
+    : '16';
 
   const page = Math.max(1, Number(rawPage) || 1);
+  const query = rawQuery ?? '';
 
   const fetchByCategory = useCallback(
     () => getProducts().then(all => all.filter(p => p.category === category)),
@@ -77,10 +87,19 @@ export const ProductsPage = ({ category }: Props) => {
 
   const { data: products, loading, error, reload } = useAsync(fetchByCategory);
 
-  const sorted = useMemo(
-    () => sortProducts(products ?? [], sort),
-    [products, sort],
-  );
+  const filtered = useMemo(() => {
+    const all = products ?? [];
+
+    if (!query) {
+      return all;
+    }
+
+    const q = query.toLowerCase();
+
+    return all.filter(p => p.name.toLowerCase().includes(q));
+  }, [products, query]);
+
+  const sorted = useMemo(() => sortProducts(filtered, sort), [filtered, sort]);
 
   const totalItems = sorted.length;
 
@@ -118,17 +137,58 @@ export const ProductsPage = ({ category }: Props) => {
     }
   }, [clampedPage, page, products, setSearchParams]);
 
-  const setParam = (key: string, value: string | null, resetPage = true) => {
+  // Оновлює URL-параметри з дотриманням правил чистоти URL:
+  // - query порожній → видалити
+  // - sort = 'age' (default) → видалити
+  // - perPage = '16' (default) → видалити; 'all' — зберігати явно
+  // - page = 1 → видалити
+  // - зміна query/sort/perPage → скинути page
+  const setParams = (update: ParamsUpdate) => {
     setSearchParams(prev => {
       const next = new URLSearchParams(prev);
 
-      if (value === null) {
-        next.delete(key);
-      } else {
-        next.set(key, value);
+      if ('query' in update) {
+        if (!update.query) {
+          next.delete('query');
+        } else {
+          next.set('query', update.query);
+        }
       }
 
-      if (resetPage) {
+      if ('sort' in update) {
+        if (!update.sort || update.sort === 'age') {
+          next.delete('sort');
+        } else {
+          next.set('sort', update.sort);
+        }
+      }
+
+      if ('perPage' in update) {
+        if (!update.perPage || update.perPage === '16') {
+          next.delete('perPage');
+        } else {
+          next.set('perPage', update.perPage);
+        }
+      }
+
+      if ('page' in update) {
+        const p = update.page ?? 1;
+
+        next.set('page', String(p));
+      }
+
+      // при зміні query/sort/perPage скидаємо page на початок
+      if ('sort' in update || 'perPage' in update || 'query' in update) {
+        next.delete('page');
+      }
+
+      // page=1 — зайвий параметр в URL
+      if (next.get('page') === '1') {
+        next.delete('page');
+      }
+
+      // perPage=all → пагінація непотрібна
+      if (next.get('perPage') === 'all') {
         next.delete('page');
       }
 
@@ -137,19 +197,15 @@ export const ProductsPage = ({ category }: Props) => {
   };
 
   const handleSortChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    const val = e.target.value as SortKey;
-
-    setParam('sort', val === 'age' ? null : val);
+    setParams({ sort: e.target.value as SortKey });
   };
 
   const handlePerPageChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    const val = e.target.value;
-
-    setParam('perPage', val === 'all' ? null : val);
+    setParams({ perPage: e.target.value as PerPage });
   };
 
   const handlePageChange = (newPage: number) => {
-    setParam('page', newPage === 1 ? null : String(newPage), false);
+    setParams({ page: newPage });
   };
 
   const showPagination = perPage !== 'all' && totalPages > 1;
@@ -177,6 +233,11 @@ export const ProductsPage = ({ category }: Props) => {
     <div className={styles.page}>
       <h1 className={styles.title}>{TITLES[category]}</h1>
       <p className={styles.count}>{totalItems} models</p>
+
+      {/* DEBUG — видалити перед мержем */}
+      <pre style={{ fontSize: 11, opacity: 0.6 }}>
+        {JSON.stringify({ query, sort, perPage, page: clampedPage }, null, 2)}
+      </pre>
 
       <div className={styles.controls}>
         <div className={styles.controlGroup}>
