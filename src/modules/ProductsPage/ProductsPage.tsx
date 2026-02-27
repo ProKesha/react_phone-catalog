@@ -245,11 +245,6 @@ export const ProductsPage = ({ category }: Props) => {
       <h1 className={styles.title}>{TITLES[category]}</h1>
       <p className={styles.count}>{totalItems} models</p>
 
-      {/* DEBUG — видалити перед мержем */}
-      <pre style={{ fontSize: 11, opacity: 0.6 }}>
-        {JSON.stringify({ query, sort, perPage, page: clampedPage }, null, 2)}
-      </pre>
-
       <div className={styles.controls}>
         <div className={styles.controlGroup}>
           <label htmlFor="sort-select" className={styles.controlLabel}>
