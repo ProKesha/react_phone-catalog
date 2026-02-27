@@ -43,7 +43,7 @@ export const ProductCard = ({ product }: Props) => {
         aria-label={name}
       >
         <img
-          src={`/${image}`}
+          src={`${import.meta.env.BASE_URL}${image}`}
           alt={name}
           className={styles.image}
           loading="lazy"

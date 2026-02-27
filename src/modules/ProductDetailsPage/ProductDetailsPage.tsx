@@ -192,14 +192,20 @@ export const ProductDetailsPage = () => {
                 }
                 onClick={() => setActiveImage(img)}
               >
-                <img src={img} alt={product.name} />
+                <img
+                  src={`${import.meta.env.BASE_URL}${img}`}
+                  alt={product.name}
+                />
               </button>
             </li>
           ))}
         </ul>
 
         <div className={styles.mainImage}>
-          <img src={activeImage || product.images[0]} alt={product.name} />
+          <img
+            src={`${import.meta.env.BASE_URL}${activeImage || product.images[0]}`}
+            alt={product.name}
+          />
         </div>
       </div>
 

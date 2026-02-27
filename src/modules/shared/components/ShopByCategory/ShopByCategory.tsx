@@ -2,20 +2,22 @@ import { Link } from 'react-router-dom';
 
 import styles from './ShopByCategory.module.scss';
 
+const BASE = import.meta.env.BASE_URL;
+
 const CATEGORIES = [
   {
     title: 'Mobile phones',
-    image: '/img/category-phones.webp',
+    image: `${BASE}img/category-phones.webp`,
     to: '/phones',
   },
   {
     title: 'Tablets',
-    image: '/img/category-tablets.webp',
+    image: `${BASE}img/category-tablets.webp`,
     to: '/tablets',
   },
   {
     title: 'Accessories',
-    image: '/img/category-accessories.webp',
+    image: `${BASE}img/category-accessories.webp`,
     to: '/accessories',
   },
 ];

@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react';
 
 import styles from './PicturesSlider.module.scss';
 
+const BASE = import.meta.env.BASE_URL;
+
 const SLIDES = [
-  { src: '/img/banner-phones.png', alt: 'New phones' },
-  { src: '/img/banner-tablets.png', alt: 'New tablets' },
-  { src: '/img/banner-accessories.png', alt: 'New accessories' },
+  { src: `${BASE}img/banner-phones.png`, alt: 'New phones' },
+  { src: `${BASE}img/banner-tablets.png`, alt: 'New tablets' },
+  { src: `${BASE}img/banner-accessories.png`, alt: 'New accessories' },
 ];
 
 // chevron paths for prev/next buttons
