@@ -229,6 +229,17 @@ export const ProductsPage = ({ category }: Props) => {
     );
   }
 
+  if (products?.length === 0) {
+    return (
+      <div className={styles.page}>
+        <h1 className={styles.title}>{TITLES[category]}</h1>
+        <p className={styles.status}>
+          There are no {TITLES[category].toLowerCase()} yet
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.page}>
       <h1 className={styles.title}>{TITLES[category]}</h1>
@@ -281,7 +292,13 @@ export const ProductsPage = ({ category }: Props) => {
         </div>
       </div>
 
-      <ProductsList products={visible} />
+      {totalItems === 0 && query ? (
+        <p className={styles.noResults}>
+          There are no {TITLES[category].toLowerCase()} matching «{query}»
+        </p>
+      ) : (
+        <ProductsList products={visible} />
+      )}
 
       {showPagination && (
         <div className={styles.pagination}>
