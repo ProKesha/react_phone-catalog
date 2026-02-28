@@ -38,10 +38,23 @@ const HEART_PATH =
   '.273-.32C8.992 2.127 10.04 1.6 11.2 1.6 13.314 1.6 15 ' +
   '5.333 15 9.545 8 14 8 14Z';
 
+// Shopping bag: handle arch + body
+const BAG_HANDLE = 'M5.5 6.5V5a2.5 2.5 0 0 1 5 0v1.5';
+const BAG_BODY = 'M2.5 6.5h11v6.5a1 1 0 0 1-1 1H3.5a1 1 0 0 1-1-1V6.5z';
+
 const SEARCH_PATH =
   'M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06' +
   '.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 ' +
   '1 0 0 0-.115-.099zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0';
+
+const HAMBURGER_PATH = 'M1 3h14M1 8h14M1 13h14';
+const CLOSE_PATH = 'M2 2l12 12M14 2L2 14';
+
+const getMobileNavClass = ({ isActive }: NavLinkState) =>
+  cn(styles.mobileNavLink, { [styles.mobileNavLinkActive]: isActive });
+
+const getMobileIconClass = ({ isActive }: NavLinkState) =>
+  cn(styles.mobileIconLink, { [styles.mobileIconLinkActive]: isActive });
 
 export const Header = () => {
   const { favoritesCount } = useFavorites();
@@ -59,9 +72,14 @@ export const Header = () => {
   const [inputValue, setInputValue] = useState(urlQuery);
   const debouncedValue = useDebounce(inputValue, 300);
 
-  // При переході на іншу сторінку — синхронізуємо input з URL
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const toggleMenu = () => setIsMenuOpen(prev => !prev);
+  const closeMenu = () => setIsMenuOpen(false);
+
+  // При переході на іншу сторінку — синхронізуємо input і закриваємо меню
   useEffect(() => {
     setInputValue(searchParams.get('query') ?? '');
+    setIsMenuOpen(false);
     // тут навмисно не додаємо searchParams у deps —
     // ефект потрібен тільки при зміні pathname
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -100,7 +118,11 @@ export const Header = () => {
       <div className={styles.inner}>
         <div className={styles.left}>
           <NavLink to="/" className={styles.logo} aria-label="Go to home page">
-            <span className={styles.logoText}>Nice Gadgets</span>
+            <span className={styles.logoText}>
+              Nice <span className={styles.logoIcon}>👌</span>
+              <br />
+              Gadgets
+            </span>
           </NavLink>
 
           <nav className={styles.nav}>
@@ -157,8 +179,8 @@ export const Header = () => {
               <span className={styles.badge}>{favoritesCount}</span>
             )}
             <svg
-              width="16"
-              height="16"
+              width="20"
+              height="20"
               viewBox="0 0 16 16"
               fill="none"
               aria-hidden="true"
@@ -176,25 +198,131 @@ export const Header = () => {
           <NavLink to="/cart" className={getIconClass} aria-label="Cart">
             {cartCount > 0 && <span className={styles.badge}>{cartCount}</span>}
             <svg
-              width="16"
-              height="16"
+              width="20"
+              height="20"
               viewBox="0 0 16 16"
               fill="none"
               aria-hidden="true"
             >
               <path
-                d="M2 1h1.5l1.8 8h7.4l1.3-5H4.5"
+                d={BAG_HANDLE}
                 stroke="currentColor"
                 strokeWidth="1.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />
-              <circle cx="6.5" cy="12.5" r="1" fill="currentColor" />
-              <circle cx="11.5" cy="12.5" r="1" fill="currentColor" />
+              <path
+                d={BAG_BODY}
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
           </NavLink>
         </div>
+
+        <button
+          type="button"
+          className={styles.hamburger}
+          aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+          onClick={toggleMenu}
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 16 16"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d={isMenuOpen ? CLOSE_PATH : HAMBURGER_PATH}
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+            />
+          </svg>
+        </button>
       </div>
+
+      {isMenuOpen && (
+        <div className={styles.mobileMenu}>
+          <nav className={styles.mobileNav}>
+            {NAV_LINKS.map(({ path, label, end }) => (
+              <NavLink
+                key={path}
+                to={path}
+                end={end}
+                className={getMobileNavClass}
+                onClick={closeMenu}
+              >
+                {label}
+              </NavLink>
+            ))}
+          </nav>
+
+          <div className={styles.mobileActions}>
+            <NavLink
+              to="/favorites"
+              className={getMobileIconClass}
+              aria-label="Favorites"
+              onClick={closeMenu}
+            >
+              {favoritesCount > 0 && (
+                <span className={styles.badge}>{favoritesCount}</span>
+              )}
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 16 16"
+                fill="none"
+                aria-hidden="true"
+              >
+                <path
+                  d={HEART_PATH}
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </NavLink>
+
+            <NavLink
+              to="/cart"
+              className={getMobileIconClass}
+              aria-label="Cart"
+              onClick={closeMenu}
+            >
+              {cartCount > 0 && (
+                <span className={styles.badge}>{cartCount}</span>
+              )}
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 16 16"
+                fill="none"
+                aria-hidden="true"
+              >
+                <path
+                  d={BAG_HANDLE}
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d={BAG_BODY}
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </NavLink>
+          </div>
+        </div>
+      )}
     </header>
   );
 };

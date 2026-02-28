@@ -15,11 +15,12 @@
 
 // ─── Logo ─────────────────────────────────────────────────────────────────────
 .logo {
-  font-size: 14px;
+  font-size: 11px;
   font-weight: 800;
   color: var(--color-header-text);
   text-transform: uppercase;
-  letter-spacing: 3px;
+  letter-spacing: 2px;
+  line-height: 1.4;
 }
 
 // ─── Nav links ────────────────────────────────────────────────────────────────

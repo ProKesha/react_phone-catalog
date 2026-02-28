@@ -29,12 +29,17 @@
   flex-shrink: 0;
 
   &Text {
-    font-size: 14px;
+    font-size: 11px;
     font-weight: 800;
     color: var(--color-header-text);
     text-transform: uppercase;
-    letter-spacing: 3px;
-    white-space: nowrap;
+    letter-spacing: 2px;
+    line-height: 1.3;
+  }
+
+  &Icon {
+    font-size: 12px;
+    text-transform: none;
   }
 }
 
@@ -42,6 +47,10 @@
 .nav {
   display: flex;
   align-items: stretch;
+
+  @media (max-width: 639px) {
+    display: none;
+  }
 }
 
 .navLink {
@@ -88,6 +97,16 @@
 .actions {
   display: flex;
   align-items: stretch;
+
+  @media (max-width: 639px) {
+    display: none;
+  }
+}
+
+// svg opacity transition — shared for desktop and mobile icon links
+.iconLink svg,
+.mobileIconLink svg {
+  transition: opacity var(--transition-base);
 }
 
 .iconLink {
@@ -111,10 +130,6 @@
     transition: background-color var(--transition-base);
   }
 
-  svg {
-    transition: opacity var(--transition-base);
-  }
-
   &:hover svg {
     opacity: 0.7;
   }
@@ -122,6 +137,97 @@
 
 .iconLinkActive {
   &::after {
+    background-color: var(--color-header-text);
+  }
+}
+
+// ─── Hamburger (mobile only) ──────────────────────────────────────────────────
+.hamburger {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  border-left: 1px solid var(--color-header-border);
+  color: var(--color-header-text);
+  flex-shrink: 0;
+
+  @media (max-width: 639px) {
+    display: flex;
+  }
+}
+
+// ─── Mobile menu overlay ──────────────────────────────────────────────────────
+.mobileMenu {
+  position: fixed;
+  inset: var(--header-height) 0 0 0;
+  background-color: var(--color-header-bg);
+  z-index: 99;
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--color-header-border);
+}
+
+.mobileNav {
+  display: flex;
+  flex-direction: column;
+}
+
+.mobileNavLink {
+  display: flex;
+  align-items: center;
+  padding: 20px 24px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--color-secondary);
+  border-bottom: 1px solid var(--color-header-border);
+  transition: color var(--transition-base);
+
+  &:hover {
+    color: var(--color-header-text);
+  }
+}
+
+.mobileNavLinkActive {
+  color: var(--color-header-text);
+}
+
+.mobileActions {
+  margin-top: auto;
+  display: flex;
+  border-top: 1px solid var(--color-header-border);
+}
+
+.mobileIconLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  height: 64px;
+  border-right: 1px solid var(--color-header-border);
+  color: var(--color-secondary);
+  position: relative;
+
+  &:last-child {
+    border-right: none;
+  }
+
+  &:hover svg {
+    opacity: 0.7;
+  }
+}
+
+.mobileIconLinkActive {
+  color: var(--color-header-text);
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
     background-color: var(--color-header-text);
   }
 }
