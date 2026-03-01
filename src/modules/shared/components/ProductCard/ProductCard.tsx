@@ -6,10 +6,10 @@ import styles from './ProductCard.module.scss';
 
 // Extracted to comply with max-len: 80 lint rule
 const HEART_PATH =
-  'M8 14S1 9.545 1 5.333C1 3.254 2.686 1.6 4.8 1.6c1.16 0 ' +
-  '2.208.527 2.927 1.36A.75.75 0 0 0 8 3.28a.75.75 0 0 0 ' +
-  '.273-.32C8.992 2.127 10.04 1.6 11.2 1.6 13.314 1.6 15 ' +
-  '5.333 15 9.545 8 14 8 14Z';
+  'M8 13c-.24 0-.47-.09-.65-.25C5.48 11.13 2 8.09 2 5.25 ' +
+  '2 3.46 3.4 2 5.12 2 6.16 2 7.13 2.53 7.7 3.39L8 3.84l.3-.45' +
+  'C8.87 2.53 9.84 2 10.88 2 12.6 2 14 3.46 14 5.25c0 2.84-3.48 ' +
+  '5.88-5.35 7.5-.18.16-.41.25-.65.25z';
 
 type Props = {
   product: Product;
@@ -101,7 +101,7 @@ export const ProductCard = ({ product }: Props) => {
             <path
               d={HEART_PATH}
               stroke="currentColor"
-              strokeWidth="1.5"
+              strokeWidth="1.2"
               strokeLinecap="round"
               strokeLinejoin="round"
             />

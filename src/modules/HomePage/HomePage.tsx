@@ -44,12 +44,18 @@ export const HomePage = () => {
   return (
     <div className={styles.page}>
       <div className={styles.container}>
-        <h1 className={styles.heading}>Welcome to Nice Gadgets store!</h1>
+        <h1 className="visually-hidden">Product Catalog</h1>
+        <h2 className={styles.heading}>Welcome to Nice Gadgets store!</h2>
       </div>
 
-      <section className={styles.picturesSlider} aria-label="Featured products">
-        <PicturesSlider />
-      </section>
+      <div className={styles.container}>
+        <section
+          className={styles.picturesSlider}
+          aria-label="Featured products"
+        >
+          <PicturesSlider />
+        </section>
+      </div>
 
       <div className={styles.container}>
         <section className={styles.section} aria-labelledby="brand-new-title">

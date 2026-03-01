@@ -1,5 +1,10 @@
 import styles from './Footer.module.scss';
 
+const GITHUB_REPO_URL = 'https://github.com/ProKesha/react-phone-catalog';
+const GITHUB_PROFILE_URL = 'https://github.com/ProKesha';
+const LICENSE_URL =
+  'https://github.com/ProKesha/react-phone-catalog/blob/master/LICENSE';
+
 const handleScrollToTop = () => {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
@@ -8,14 +13,14 @@ export const Footer = () => (
   <footer className={styles.footer}>
     <div className={styles.inner}>
       <span className={styles.logo}>
-        Nice 👌
+        Nice <span className={styles.logoOk}>👌</span>
         <br />
         Gadgets
       </span>
 
       <nav className={styles.nav} aria-label="Footer navigation">
         <a
-          href="https://github.com"
+          href={GITHUB_REPO_URL}
           target="_blank"
           rel="noopener noreferrer"
           className={styles.link}
@@ -23,7 +28,7 @@ export const Footer = () => (
           Github
         </a>
         <a
-          href="https://github.com"
+          href={GITHUB_PROFILE_URL}
           target="_blank"
           rel="noopener noreferrer"
           className={styles.link}
@@ -31,7 +36,7 @@ export const Footer = () => (
           Contacts
         </a>
         <a
-          href="https://github.com"
+          href={LICENSE_URL}
           target="_blank"
           rel="noopener noreferrer"
           className={styles.link}

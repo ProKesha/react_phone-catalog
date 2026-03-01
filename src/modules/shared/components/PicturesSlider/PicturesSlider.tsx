@@ -5,9 +5,9 @@ import styles from './PicturesSlider.module.scss';
 const BASE = import.meta.env.BASE_URL;
 
 const SLIDES = [
-  { src: `${BASE}img/banner-phones.png`, alt: 'New phones' },
-  { src: `${BASE}img/banner-tablets.png`, alt: 'New tablets' },
-  { src: `${BASE}img/banner-accessories.png`, alt: 'New accessories' },
+  { src: `${BASE}img/banners/slide-1.png`, alt: 'New phones' },
+  { src: `${BASE}img/banners/slide-2.png`, alt: 'New tablets' },
+  { src: `${BASE}img/banners/slide-3.png`, alt: 'New accessories' },
 ];
 
 // chevron paths for prev/next buttons

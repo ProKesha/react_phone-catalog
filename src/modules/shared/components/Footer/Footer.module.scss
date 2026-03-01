@@ -11,6 +11,17 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+
+  @media (max-width: 639px) {
+    height: auto;
+    min-height: 250px;
+    width: 100%;
+    padding: 24px 20px;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 12px;
+  }
 }
 
 // ─── Logo ─────────────────────────────────────────────────────────────────────
@@ -23,10 +34,24 @@
   line-height: 1.4;
 }
 
+.logoOk {
+  display: inline-block;
+  color: #f8d449;
+  font-size: 10px;
+  line-height: 1;
+  transform: translateY(-2px);
+}
+
 // ─── Nav links ────────────────────────────────────────────────────────────────
 .nav {
   display: flex;
   gap: 32px;
+
+  @media (max-width: 639px) {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
 }
 
 .link {
@@ -48,6 +73,12 @@
   gap: 16px;
   color: var(--color-secondary);
 
+  @media (max-width: 639px) {
+    gap: 8px;
+    align-self: center;
+    margin-top: 20px;
+  }
+
   &:hover {
     color: var(--color-header-text);
   }
@@ -58,6 +89,11 @@
   font-weight: 700;
   letter-spacing: 1px;
   text-transform: uppercase;
+
+  @media (max-width: 639px) {
+    letter-spacing: 0.5px;
+    text-transform: none;
+  }
 }
 
 .backToTopIcon {

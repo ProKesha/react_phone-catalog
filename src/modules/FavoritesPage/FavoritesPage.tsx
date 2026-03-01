@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 
 import { getProducts } from '../shared/api/apiClient';
 import { useAsync } from '../shared/hooks/useAsync';
@@ -10,6 +10,8 @@ import styles from './FavoritesPage.module.scss';
 
 export const FavoritesPage = () => {
   const { favorites } = useFavorites();
+  const [searchParams] = useSearchParams();
+  const query = (searchParams.get('query') ?? '').trim().toLowerCase();
 
   const fetchProducts = useCallback(() => getProducts(), []);
   const { data: products, loading, error, reload } = useAsync(fetchProducts);
@@ -18,6 +20,15 @@ export const FavoritesPage = () => {
     () => (products ?? []).filter(p => favorites.includes(p.itemId)),
     [products, favorites],
   );
+  const filteredFavorites = useMemo(() => {
+    if (!query) {
+      return favoriteProducts;
+    }
+
+    return favoriteProducts.filter(product =>
+      product.name.toLowerCase().includes(query),
+    );
+  }, [favoriteProducts, query]);
 
   if (favorites.length === 0) {
     return (
@@ -53,8 +64,15 @@ export const FavoritesPage = () => {
   return (
     <div className={styles.page}>
       <h1 className={styles.title}>Favorites</h1>
-      <p className={styles.count}>{favoriteProducts.length} items</p>
-      <ProductsList products={favoriteProducts} />
+      <p className={styles.count}>{filteredFavorites.length} items</p>
+
+      {filteredFavorites.length === 0 && query ? (
+        <p className={styles.noResults}>
+          There are no products matching the query
+        </p>
+      ) : (
+        <ProductsList products={filteredFavorites} />
+      )}
     </div>
   );
 };

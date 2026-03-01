@@ -31,16 +31,14 @@ const getNavClass = ({ isActive }: NavLinkState) =>
 const getIconClass = ({ isActive }: NavLinkState) =>
   cn(styles.iconLink, { [styles.iconLinkActive]: isActive });
 
-// SVG path data extracted to avoid max-len lint errors in JSX attributes
 const HEART_PATH =
-  'M8 14S1 9.545 1 5.333C1 3.254 2.686 1.6 4.8 1.6c1.16 0 ' +
-  '2.208.527 2.927 1.36A.75.75 0 0 0 8 3.28a.75.75 0 0 0 ' +
-  '.273-.32C8.992 2.127 10.04 1.6 11.2 1.6 13.314 1.6 15 ' +
-  '5.333 15 9.545 8 14 8 14Z';
+  'M8 13c-.24 0-.47-.09-.65-.25C5.48 11.13 2 8.09 2 5.25 ' +
+  '2 3.46 3.4 2 5.12 2 6.16 2 7.13 2.53 7.7 3.39L8 3.84l.3-.45' +
+  'C8.87 2.53 9.84 2 10.88 2 12.6 2 14 3.46 14 5.25c0 2.84-3.48 ' +
+  '5.88-5.35 7.5-.18.16-.41.25-.65.25z';
 
-// Shopping bag: handle arch + body
-const BAG_HANDLE = 'M5.5 6.5V5a2.5 2.5 0 0 1 5 0v1.5';
-const BAG_BODY = 'M2.5 6.5h11v6.5a1 1 0 0 1-1 1H3.5a1 1 0 0 1-1-1V6.5z';
+const CART_HANDLE_PATH = 'M5 6V4.5a3 3 0 1 1 6 0V6';
+const CART_BODY_PATH = 'M3 6h10l-.75 8H3.75L3 6z';
 
 const SEARCH_PATH =
   'M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06' +
@@ -119,7 +117,7 @@ export const Header = () => {
         <div className={styles.left}>
           <NavLink to="/" className={styles.logo} aria-label="Go to home page">
             <span className={styles.logoText}>
-              Nice <span className={styles.logoIcon}>👌</span>
+              Nice <span className={styles.logoOk}>👌</span>
               <br />
               Gadgets
             </span>
@@ -188,7 +186,7 @@ export const Header = () => {
               <path
                 d={HEART_PATH}
                 stroke="currentColor"
-                strokeWidth="1.5"
+                strokeWidth="1.2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />
@@ -205,16 +203,16 @@ export const Header = () => {
               aria-hidden="true"
             >
               <path
-                d={BAG_HANDLE}
+                d={CART_HANDLE_PATH}
                 stroke="currentColor"
-                strokeWidth="1.5"
+                strokeWidth="1.2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />
               <path
-                d={BAG_BODY}
+                d={CART_BODY_PATH}
                 stroke="currentColor"
-                strokeWidth="1.5"
+                strokeWidth="1.2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />
@@ -281,7 +279,7 @@ export const Header = () => {
                 <path
                   d={HEART_PATH}
                   stroke="currentColor"
-                  strokeWidth="1.5"
+                  strokeWidth="1.2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 />
@@ -305,16 +303,16 @@ export const Header = () => {
                 aria-hidden="true"
               >
                 <path
-                  d={BAG_HANDLE}
+                  d={CART_HANDLE_PATH}
                   stroke="currentColor"
-                  strokeWidth="1.5"
+                  strokeWidth="1.2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 />
                 <path
-                  d={BAG_BODY}
+                  d={CART_BODY_PATH}
                   stroke="currentColor"
-                  strokeWidth="1.5"
+                  strokeWidth="1.2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 />

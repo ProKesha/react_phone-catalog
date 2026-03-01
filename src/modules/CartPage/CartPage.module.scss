@@ -1,14 +1,38 @@
 .page {
-  padding: 24px 16px 64px;
+  padding: 24px 16px 72px;
   max-width: var(--content-max-width);
   margin: 0 auto;
+
+  @media (max-width: 639px) {
+    padding: 16px 16px 48px;
+  }
+}
+
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 16px;
+  color: var(--color-primary);
+  font-size: 14px;
+  font-weight: 600;
+  opacity: 0.9;
+
+  &:hover {
+    opacity: 1;
+  }
 }
 
 .title {
-  font-size: 32px;
+  font-size: 48px;
   font-weight: 800;
   color: var(--color-primary);
   margin-bottom: 32px;
+
+  @media (max-width: 639px) {
+    font-size: 40px;
+    margin-bottom: 24px;
+  }
 }
 
 // ─── Empty state ───────────────────────────────────────────────────────────────
@@ -68,9 +92,13 @@
   flex-direction: column;
   gap: 16px;
 
-  @media (min-width: 768px) {
+  @media (min-width: 900px) {
     flex-direction: row;
     align-items: flex-start;
+  }
+
+  @media (max-width: 639px) {
+    gap: 24px;
   }
 }
 
@@ -85,16 +113,26 @@
 
 .item {
   display: grid;
-  grid-template-columns: 20px 80px 1fr auto auto;
-  column-gap: 16px;
+  grid-template-columns: 16px 66px 1fr;
+  grid-template-areas:
+    'remove image name'
+    'remove controls price';
+  gap: 12px 16px;
   align-items: center;
-  padding: 16px;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
+  padding: 18px 16px;
+  background: var(--color-card);
+  border: 1px solid transparent;
+
+  @media (min-width: 900px) {
+    grid-template-columns: 16px 66px 1fr auto auto;
+    grid-template-areas: 'remove image name controls price';
+    row-gap: 0;
+    padding: 24px;
+  }
 }
 
 .removeBtn {
+  grid-area: remove;
   font-size: 16px;
   line-height: 1;
   color: var(--color-secondary);
@@ -106,16 +144,20 @@
 }
 
 .imageLink {
+  grid-area: image;
   display: block;
+  width: 66px;
+  height: 66px;
 }
 
 .itemImage {
-  width: 80px;
-  height: 80px;
+  width: 66px;
+  height: 66px;
   object-fit: contain;
 }
 
 .itemName {
+  grid-area: name;
   font-size: 14px;
   font-weight: 600;
   line-height: 1.4;
@@ -128,9 +170,15 @@
 
 // ─── Quantity controls ────────────────────────────────────────────────────────
 .controls {
+  grid-area: controls;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 13px;
+  justify-self: start;
+
+  @media (min-width: 900px) {
+    justify-self: end;
+  }
 }
 
 .qtyBtn {
@@ -140,23 +188,28 @@
   width: 32px;
   height: 32px;
   border: 1px solid var(--color-border);
-  border-radius: 50%;
+  border-radius: 0;
   font-size: 16px;
   color: var(--color-primary);
-  transition: border-color var(--transition-base);
+  transition:
+    border-color var(--transition-base),
+    background-color var(--transition-base);
 
   &:disabled {
     color: var(--color-secondary);
+    border-color: var(--color-border);
+    background: transparent;
     cursor: default;
   }
 
   &:hover:not(:disabled) {
     border-color: var(--color-primary);
+    background: rgba(255, 255, 255, 0.06);
   }
 }
 
 .qty {
-  min-width: 24px;
+  min-width: 8px;
   text-align: center;
   font-size: 14px;
   font-weight: 700;
@@ -164,22 +217,31 @@
 }
 
 .itemPrice {
-  font-size: 16px;
+  grid-area: price;
+  font-size: 32px;
   font-weight: 800;
   color: var(--color-primary);
   white-space: nowrap;
+  line-height: 1;
+  justify-self: end;
+
+  @media (max-width: 639px) {
+    font-size: 30px;
+  }
 }
 
 // ─── Summary ──────────────────────────────────────────────────────────────────
 .summary {
   padding: 24px;
   border: 1px solid var(--color-border);
-  border-radius: 8px;
-  background: var(--color-surface);
+  border-radius: 0;
+  background: transparent;
+  text-align: center;
 
-  @media (min-width: 768px) {
-    width: 280px;
+  @media (min-width: 900px) {
+    width: 368px;
     flex-shrink: 0;
+    text-align: unset;
   }
 }
 
@@ -198,18 +260,18 @@
 .summaryDivider {
   border: none;
   border-top: 1px solid var(--color-border);
-  margin: 16px 0;
+  margin: 20px 0;
 }
 
 .checkoutBtn {
   width: 100%;
   height: 48px;
-  background-color: var(--color-primary);
-  color: var(--color-bg);
+  background: #905bff;
+  color: var(--color-white);
   font-size: 14px;
   font-weight: 700;
   letter-spacing: 0.4px;
-  border-radius: 8px;
+  border-radius: 0;
   border: 1px solid transparent;
   transition:
     background-color var(--transition-base),
@@ -217,8 +279,8 @@
     border-color var(--transition-base);
 
   &:hover {
-    background-color: transparent;
-    color: var(--color-primary);
-    border-color: var(--color-primary);
+    background: #a378ff;
+    border-color: transparent;
+    color: var(--color-white);
   }
 }

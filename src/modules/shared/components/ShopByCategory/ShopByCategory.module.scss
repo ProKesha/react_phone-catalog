@@ -14,9 +14,17 @@
 
 .imageWrapper {
   overflow: hidden;
-  border-radius: 8px;
-  background: var(--color-surface);
+  border-radius: 0;
+  background: #6d6474;
   margin-bottom: 16px;
+}
+
+li:nth-child(2) .imageWrapper {
+  background: #8d8d92;
+}
+
+li:nth-child(3) .imageWrapper {
+  background: #973d5f;
 }
 
 .image {
@@ -26,7 +34,7 @@
 }
 
 .title {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 800;
   color: var(--color-primary);
   margin-bottom: 4px;

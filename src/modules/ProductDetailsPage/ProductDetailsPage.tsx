@@ -139,19 +139,24 @@ export const ProductDetailsPage = () => {
           <ul className={styles.colorList}>
             {product.colorsAvailable.map(color => (
               <li key={color}>
-                <button
-                  type="button"
-                  aria-label={color}
-                  className={
-                    color === selectedColor
-                      ? `${styles.colorBtn} ${styles.colorBtnActive}`
-                      : styles.colorBtn
-                  }
+                <input
+                  id={`color-${color}`}
+                  type="radio"
+                  name="product-color"
+                  value={color}
+                  checked={color === selectedColor}
+                  onChange={() => setSelectedColor(color)}
+                  className={styles.colorInput}
+                />
+                <label
+                  htmlFor={`color-${color}`}
+                  className={styles.colorBtn}
                   style={{
                     backgroundColor: COLOR_MAP[color] ?? '#ccc',
                   }}
-                  onClick={() => setSelectedColor(color)}
-                />
+                >
+                  <span className="visually-hidden">{color}</span>
+                </label>
               </li>
             ))}
           </ul>
@@ -162,17 +167,21 @@ export const ProductDetailsPage = () => {
           <ul className={styles.capacityList}>
             {product.capacityAvailable.map(cap => (
               <li key={cap}>
-                <button
-                  type="button"
-                  className={
-                    cap === selectedCapacity
-                      ? `${styles.capacityBtn} ${styles.capacityBtnActive}`
-                      : styles.capacityBtn
-                  }
-                  onClick={() => setSelectedCapacity(cap)}
+                <input
+                  id={`capacity-${cap}`}
+                  type="radio"
+                  name="product-capacity"
+                  value={cap}
+                  checked={cap === selectedCapacity}
+                  onChange={() => setSelectedCapacity(cap)}
+                  className={styles.capacityInput}
+                />
+                <label
+                  htmlFor={`capacity-${cap}`}
+                  className={styles.capacityBtn}
                 >
                   {cap}
-                </button>
+                </label>
               </li>
             ))}
           </ul>
