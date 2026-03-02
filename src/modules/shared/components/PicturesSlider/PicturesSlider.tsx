@@ -5,7 +5,11 @@ import styles from './PicturesSlider.module.scss';
 const BASE = import.meta.env.BASE_URL;
 
 const SLIDES = [
-  { src: `${BASE}img/banners/slide-1.png`, alt: 'New phones' },
+  {
+    src: `${BASE}img/banners/Banner.png`,
+    mobileSrc: `${BASE}img/banners/Banner-mobile.png`,
+    alt: 'iPhone 14 Pro banner',
+  },
   { src: `${BASE}img/banners/slide-2.png`, alt: 'New tablets' },
   { src: `${BASE}img/banners/slide-3.png`, alt: 'New accessories' },
 ];
@@ -38,7 +42,12 @@ export const PicturesSlider = () => {
       >
         {SLIDES.map(slide => (
           <div key={slide.src} className={styles.slide}>
-            <img src={slide.src} alt={slide.alt} className={styles.image} />
+            <picture>
+              {slide.mobileSrc && (
+                <source media="(max-width: 639px)" srcSet={slide.mobileSrc} />
+              )}
+              <img src={slide.src} alt={slide.alt} className={styles.image} />
+            </picture>
           </div>
         ))}
       </div>
