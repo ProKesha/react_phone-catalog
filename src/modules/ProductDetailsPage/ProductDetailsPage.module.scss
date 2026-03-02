@@ -4,6 +4,68 @@
   padding: 40px 16px 80px;
 }
 
+.statusBlock {
+  margin: 40px auto 0;
+  max-width: 560px;
+  padding: 32px;
+  border: 1px solid var(--color-border);
+  background: var(--color-card);
+}
+
+.statusTitle {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--color-primary);
+  margin-bottom: 12px;
+}
+
+.statusText {
+  font-size: 14px;
+  color: var(--color-secondary);
+  margin-bottom: 24px;
+}
+
+.statusActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.statusPrimaryBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  padding: 0 24px;
+  border: 1px solid transparent;
+  background: var(--color-accent);
+  color: var(--color-white);
+  font-size: 14px;
+  font-weight: 700;
+  transition: background-color var(--transition-base);
+
+  &:hover {
+    background: var(--color-accent-hover);
+  }
+}
+
+.statusSecondaryLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  padding: 0 24px;
+  border: 1px solid var(--color-border);
+  color: var(--color-primary);
+  font-size: 14px;
+  font-weight: 700;
+  transition: border-color var(--transition-base);
+
+  &:hover {
+    border-color: var(--color-primary);
+  }
+}
+
 .backBtn {
   display: inline-flex;
   align-items: center;
