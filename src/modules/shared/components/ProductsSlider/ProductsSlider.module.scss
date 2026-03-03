@@ -54,6 +54,11 @@
 }
 
 .item {
+  display: flex;
   flex-shrink: 0;
   width: 272px;
+
+  @media (min-width: 1200px) {
+    width: calc((100% - 48px) / 4);
+  }
 }
