@@ -7,8 +7,7 @@ import styles from './ProductsSlider.module.scss';
 const PREV_PATH = 'M11 2L5 8l6 6';
 const NEXT_PATH = 'M5 2l6 6-6 6';
 
-// card width 272px + gap 16px
-const SCROLL_STEP = 288;
+const ITEM_GAP = 16;
 
 type Props = {
   title: string;
@@ -20,8 +19,13 @@ export const ProductsSlider = ({ title, titleId, products }: Props) => {
   const trackRef = useRef<HTMLUListElement>(null);
 
   const scroll = (dir: 1 | -1) => {
+    const firstItem = trackRef.current
+      ?.firstElementChild as HTMLLIElement | null;
+    const itemWidth = firstItem?.getBoundingClientRect().width ?? 272;
+    const scrollStep = itemWidth + ITEM_GAP;
+
     trackRef.current?.scrollBy({
-      left: dir * SCROLL_STEP,
+      left: dir * scrollStep,
       behavior: 'smooth',
     });
   };

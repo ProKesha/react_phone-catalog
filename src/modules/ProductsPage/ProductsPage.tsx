@@ -5,6 +5,7 @@ import cn from 'classnames';
 import { getProducts } from '../shared/api/apiClient';
 import { useAsync } from '../shared/hooks/useAsync';
 import { ProductsList } from '../shared/components/ProductsList';
+import { Loader } from '../shared/components/Loader';
 import type { Product, ProductCategory } from '../shared/types/product';
 import styles from './ProductsPage.module.scss';
 
@@ -213,7 +214,7 @@ export const ProductsPage = ({ category }: Props) => {
   if (loading) {
     return (
       <div className={styles.page}>
-        <p className={styles.status}>Loading {TITLES[category]}...</p>
+        <Loader />
       </div>
     );
   }

@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type DependencyList,
+} from 'react';
 
 type AsyncState<T> = {
   data: T | null;
@@ -17,7 +23,10 @@ type UseAsyncResult<T> = AsyncState<T> & {
  *
  * reload() re-triggers the request manually (e.g. after an error).
  */
-export const useAsync = <T>(asyncFn: () => Promise<T>): UseAsyncResult<T> => {
+export const useAsync = <T>(
+  asyncFn: () => Promise<T>,
+  deps: DependencyList = [],
+): UseAsyncResult<T> => {
   const [state, setState] = useState<AsyncState<T>>({
     data: null,
     loading: true,
@@ -57,9 +66,9 @@ export const useAsync = <T>(asyncFn: () => Promise<T>): UseAsyncResult<T> => {
     return () => {
       cancelled = true;
     };
-    // reloadKey is the only intentional trigger; asyncFn is tracked via ref
+    // asyncFn is tracked via ref; deps controls re-runs intentionally
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [reloadKey]);
+  }, [reloadKey, ...deps]);
 
   return { ...state, reload };
 };

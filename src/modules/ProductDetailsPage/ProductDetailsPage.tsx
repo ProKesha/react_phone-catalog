@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import {
+  getCategoryProductDetails,
   getProductDetails,
   getProducts,
   getSuggestedProducts,
@@ -9,6 +10,7 @@ import {
 import { useAsync } from '../shared/hooks/useAsync';
 import { Loader } from '../shared/components/Loader';
 import { ProductCard } from '../shared/components/ProductCard';
+import type { ProductCategory } from '../shared/types/product';
 import type { ProductDetails } from '../shared/types/productDetails';
 import styles from './ProductDetailsPage.module.scss';
 
@@ -40,26 +42,73 @@ const COLOR_MAP: Record<string, string> = {
   rosegold: '#E8BCAC',
 };
 
+type VariantItem = {
+  id: string;
+  namespaceId: string;
+  color: string;
+  capacity: string;
+};
+
+type DetailsPayload = {
+  product: ProductDetails | null;
+  category: ProductCategory | null;
+};
+
+const normalizeVariantValue = (value: string): string =>
+  value.toLowerCase().replace(/[\s-]/g, '');
+
+const findVariantId = (
+  namespaceId: string,
+  color: string,
+  capacity: string,
+  variants: VariantItem[],
+): string | null => {
+  const normalizedNamespace = normalizeVariantValue(namespaceId);
+  const normalizedColor = normalizeVariantValue(color);
+  const normalizedCapacity = normalizeVariantValue(capacity);
+
+  const match = variants.find(
+    item =>
+      normalizeVariantValue(item.namespaceId) === normalizedNamespace &&
+      normalizeVariantValue(item.color) === normalizedColor &&
+      normalizeVariantValue(item.capacity) === normalizedCapacity,
+  );
+
+  return match?.id ?? null;
+};
+
 export const ProductDetailsPage = () => {
   const { productId = '' } = useParams();
   const navigate = useNavigate();
 
-  const fetchDetails = useCallback(async (): Promise<ProductDetails | null> => {
+  const fetchDetails = useCallback(async (): Promise<DetailsPayload> => {
     if (!productId) {
-      return null;
+      return { product: null, category: null };
     }
 
     const products = await getProducts();
     const base = products.find(p => p.itemId === productId);
 
     if (!base) {
-      return null;
+      return { product: null, category: null };
     }
 
-    return getProductDetails(base.category, productId);
+    try {
+      const details = await getProductDetails(base.category, productId);
+
+      return { product: details, category: base.category };
+    } catch (err: unknown) {
+      if (err instanceof Error && err.message.includes('404')) {
+        return { product: null, category: base.category };
+      }
+
+      throw err;
+    }
   }, [productId]);
 
-  const { data: product, loading, error, reload } = useAsync(fetchDetails);
+  const { data, loading, error, reload } = useAsync(fetchDetails, [productId]);
+  const product = data?.product ?? null;
+  const fallbackCategory = data?.category ?? null;
 
   const fetchSuggested = useCallback(async () => {
     if (!product) {
@@ -69,18 +118,43 @@ export const ProductDetailsPage = () => {
     return getSuggestedProducts(productId, product.category);
   }, [product, productId]);
 
-  const { data: suggested, loading: suggestedLoading } =
-    useAsync(fetchSuggested);
+  const { data: suggested, loading: suggestedLoading } = useAsync(
+    fetchSuggested,
+    [productId, product?.id],
+  );
 
   const [activeImage, setActiveImage] = useState('');
-  const [selectedColor, setSelectedColor] = useState('');
-  const [selectedCapacity, setSelectedCapacity] = useState('');
+
+  const fetchVariants = useCallback(async (): Promise<VariantItem[]> => {
+    if (!product) {
+      return [];
+    }
+
+    const [products, categoryDetails] = await Promise.all([
+      getProducts(),
+      getCategoryProductDetails(product.category),
+    ]);
+
+    const availableIds = new Set(products.map(item => item.itemId));
+
+    return categoryDetails
+      .filter(
+        item =>
+          item.namespaceId === product.namespaceId && availableIds.has(item.id),
+      )
+      .map(item => ({
+        id: item.id,
+        namespaceId: item.namespaceId,
+        color: item.color,
+        capacity: item.capacity,
+      }));
+  }, [product]);
+
+  const { data: variants } = useAsync(fetchVariants, [product?.id]);
 
   useEffect(() => {
     if (product) {
       setActiveImage(product.images[0]);
-      setSelectedColor(product.colorsAvailable[0]);
-      setSelectedCapacity(product.capacityAvailable[0]);
     }
   }, [product]);
 
@@ -90,17 +164,61 @@ export const ProductDetailsPage = () => {
 
   if (error) {
     return (
-      <>
-        <p>Something went wrong: {String(error)}</p>
-        <button type="button" onClick={reload}>
-          Try again
-        </button>
-      </>
+      <div className={styles.page}>
+        <div className={styles.statusBlock}>
+          <h1 className={styles.statusTitle}>Something went wrong</h1>
+          <p className={styles.statusText}>{String(error)}</p>
+          <div className={styles.statusActions}>
+            <button
+              type="button"
+              className={styles.statusPrimaryBtn}
+              onClick={reload}
+            >
+              Reload
+            </button>
+          </div>
+        </div>
+      </div>
     );
   }
 
   if (!product) {
-    return <p>Product was not found</p>;
+    const categoryPath = fallbackCategory ? `/${fallbackCategory}` : '/';
+    const categoryLabel = fallbackCategory
+      ? CATEGORY_LABELS[fallbackCategory]
+      : 'Home';
+
+    const handleFallbackBack = () => {
+      if (window.history.state?.idx > 0) {
+        navigate(-1);
+      } else {
+        navigate(categoryPath);
+      }
+    };
+
+    return (
+      <div className={styles.page}>
+        <div className={styles.statusBlock}>
+          <h1 className={styles.statusTitle}>Product was not found</h1>
+          <p className={styles.statusText}>
+            The requested product does not exist or has no details.
+          </p>
+          <div className={styles.statusActions}>
+            <button
+              type="button"
+              className={styles.statusPrimaryBtn}
+              onClick={handleFallbackBack}
+            >
+              Go back
+            </button>
+
+            <Link to={categoryPath} className={styles.statusSecondaryLink}>
+              Go to {categoryLabel}
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   const category = product.category;
@@ -111,6 +229,21 @@ export const ProductDetailsPage = () => {
     } else {
       navigate(`/${category}`);
     }
+  };
+
+  const handleVariantChange = (nextColor: string, nextCapacity: string) => {
+    const matchedId = findVariantId(
+      product.namespaceId,
+      nextColor,
+      nextCapacity,
+      variants ?? [],
+    );
+
+    if (!matchedId || matchedId === productId) {
+      return;
+    }
+
+    navigate(`/product/${matchedId}`, { replace: true });
   };
 
   return (
@@ -139,19 +272,24 @@ export const ProductDetailsPage = () => {
           <ul className={styles.colorList}>
             {product.colorsAvailable.map(color => (
               <li key={color}>
-                <button
-                  type="button"
-                  aria-label={color}
-                  className={
-                    color === selectedColor
-                      ? `${styles.colorBtn} ${styles.colorBtnActive}`
-                      : styles.colorBtn
-                  }
+                <input
+                  id={`color-${color}`}
+                  type="radio"
+                  name="product-color"
+                  value={color}
+                  checked={color === product.color}
+                  onChange={() => handleVariantChange(color, product.capacity)}
+                  className={styles.colorInput}
+                />
+                <label
+                  htmlFor={`color-${color}`}
+                  className={styles.colorBtn}
                   style={{
                     backgroundColor: COLOR_MAP[color] ?? '#ccc',
                   }}
-                  onClick={() => setSelectedColor(color)}
-                />
+                >
+                  <span className="visually-hidden">{color}</span>
+                </label>
               </li>
             ))}
           </ul>
@@ -162,17 +300,21 @@ export const ProductDetailsPage = () => {
           <ul className={styles.capacityList}>
             {product.capacityAvailable.map(cap => (
               <li key={cap}>
-                <button
-                  type="button"
-                  className={
-                    cap === selectedCapacity
-                      ? `${styles.capacityBtn} ${styles.capacityBtnActive}`
-                      : styles.capacityBtn
-                  }
-                  onClick={() => setSelectedCapacity(cap)}
+                <input
+                  id={`capacity-${cap}`}
+                  type="radio"
+                  name="product-capacity"
+                  value={cap}
+                  checked={cap === product.capacity}
+                  onChange={() => handleVariantChange(product.color, cap)}
+                  className={styles.capacityInput}
+                />
+                <label
+                  htmlFor={`capacity-${cap}`}
+                  className={styles.capacityBtn}
                 >
                   {cap}
-                </button>
+                </label>
               </li>
             ))}
           </ul>

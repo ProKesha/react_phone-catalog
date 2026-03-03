@@ -31,17 +31,28 @@ const getNavClass = ({ isActive }: NavLinkState) =>
 const getIconClass = ({ isActive }: NavLinkState) =>
   cn(styles.iconLink, { [styles.iconLinkActive]: isActive });
 
-// SVG path data extracted to avoid max-len lint errors in JSX attributes
 const HEART_PATH =
-  'M8 14S1 9.545 1 5.333C1 3.254 2.686 1.6 4.8 1.6c1.16 0 ' +
-  '2.208.527 2.927 1.36A.75.75 0 0 0 8 3.28a.75.75 0 0 0 ' +
-  '.273-.32C8.992 2.127 10.04 1.6 11.2 1.6 13.314 1.6 15 ' +
-  '5.333 15 9.545 8 14 8 14Z';
+  'M8 13c-.24 0-.47-.09-.65-.25C5.48 11.13 2 8.09 2 5.25 ' +
+  '2 3.46 3.4 2 5.12 2 6.16 2 7.13 2.53 7.7 3.39L8 3.84l.3-.45' +
+  'C8.87 2.53 9.84 2 10.88 2 12.6 2 14 3.46 14 5.25c0 2.84-3.48 ' +
+  '5.88-5.35 7.5-.18.16-.41.25-.65.25z';
+
+const CART_HANDLE_PATH = 'M5 6V4.5a3 3 0 1 1 6 0V6';
+const CART_BODY_PATH = 'M3 6h10l-.75 8H3.75L3 6z';
 
 const SEARCH_PATH =
   'M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06' +
   '.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 ' +
   '1 0 0 0-.115-.099zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0';
+
+const HAMBURGER_PATH = 'M1 3h14M1 8h14M1 13h14';
+const CLOSE_PATH = 'M2 2l12 12M14 2L2 14';
+
+const getMobileNavClass = ({ isActive }: NavLinkState) =>
+  cn(styles.mobileNavLink, { [styles.mobileNavLinkActive]: isActive });
+
+const getMobileIconClass = ({ isActive }: NavLinkState) =>
+  cn(styles.mobileIconLink, { [styles.mobileIconLinkActive]: isActive });
 
 export const Header = () => {
   const { favoritesCount } = useFavorites();
@@ -59,9 +70,14 @@ export const Header = () => {
   const [inputValue, setInputValue] = useState(urlQuery);
   const debouncedValue = useDebounce(inputValue, 300);
 
-  // При переході на іншу сторінку — синхронізуємо input з URL
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const toggleMenu = () => setIsMenuOpen(prev => !prev);
+  const closeMenu = () => setIsMenuOpen(false);
+
+  // При переході на іншу сторінку — синхронізуємо input і закриваємо меню
   useEffect(() => {
     setInputValue(searchParams.get('query') ?? '');
+    setIsMenuOpen(false);
     // тут навмисно не додаємо searchParams у deps —
     // ефект потрібен тільки при зміні pathname
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -100,7 +116,11 @@ export const Header = () => {
       <div className={styles.inner}>
         <div className={styles.left}>
           <NavLink to="/" className={styles.logo} aria-label="Go to home page">
-            <span className={styles.logoText}>Nice Gadgets</span>
+            <span className={styles.logoText}>
+              Nice <span className={styles.logoOk}>👌</span>
+              <br />
+              Gadgets
+            </span>
           </NavLink>
 
           <nav className={styles.nav}>
@@ -157,8 +177,8 @@ export const Header = () => {
               <span className={styles.badge}>{favoritesCount}</span>
             )}
             <svg
-              width="16"
-              height="16"
+              width="20"
+              height="20"
               viewBox="0 0 16 16"
               fill="none"
               aria-hidden="true"
@@ -166,7 +186,7 @@ export const Header = () => {
               <path
                 d={HEART_PATH}
                 stroke="currentColor"
-                strokeWidth="1.5"
+                strokeWidth="1.2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />
@@ -176,25 +196,131 @@ export const Header = () => {
           <NavLink to="/cart" className={getIconClass} aria-label="Cart">
             {cartCount > 0 && <span className={styles.badge}>{cartCount}</span>}
             <svg
-              width="16"
-              height="16"
+              width="20"
+              height="20"
               viewBox="0 0 16 16"
               fill="none"
               aria-hidden="true"
             >
               <path
-                d="M2 1h1.5l1.8 8h7.4l1.3-5H4.5"
+                d={CART_HANDLE_PATH}
                 stroke="currentColor"
-                strokeWidth="1.5"
+                strokeWidth="1.2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />
-              <circle cx="6.5" cy="12.5" r="1" fill="currentColor" />
-              <circle cx="11.5" cy="12.5" r="1" fill="currentColor" />
+              <path
+                d={CART_BODY_PATH}
+                stroke="currentColor"
+                strokeWidth="1.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
           </NavLink>
         </div>
+
+        <button
+          type="button"
+          className={styles.hamburger}
+          aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+          onClick={toggleMenu}
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 16 16"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d={isMenuOpen ? CLOSE_PATH : HAMBURGER_PATH}
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+            />
+          </svg>
+        </button>
       </div>
+
+      {isMenuOpen && (
+        <div className={styles.mobileMenu}>
+          <nav className={styles.mobileNav}>
+            {NAV_LINKS.map(({ path, label, end }) => (
+              <NavLink
+                key={path}
+                to={path}
+                end={end}
+                className={getMobileNavClass}
+                onClick={closeMenu}
+              >
+                {label}
+              </NavLink>
+            ))}
+          </nav>
+
+          <div className={styles.mobileActions}>
+            <NavLink
+              to="/favorites"
+              className={getMobileIconClass}
+              aria-label="Favorites"
+              onClick={closeMenu}
+            >
+              {favoritesCount > 0 && (
+                <span className={styles.badge}>{favoritesCount}</span>
+              )}
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 16 16"
+                fill="none"
+                aria-hidden="true"
+              >
+                <path
+                  d={HEART_PATH}
+                  stroke="currentColor"
+                  strokeWidth="1.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </NavLink>
+
+            <NavLink
+              to="/cart"
+              className={getMobileIconClass}
+              aria-label="Cart"
+              onClick={closeMenu}
+            >
+              {cartCount > 0 && (
+                <span className={styles.badge}>{cartCount}</span>
+              )}
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 16 16"
+                fill="none"
+                aria-hidden="true"
+              >
+                <path
+                  d={CART_HANDLE_PATH}
+                  stroke="currentColor"
+                  strokeWidth="1.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d={CART_BODY_PATH}
+                  stroke="currentColor"
+                  strokeWidth="1.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </NavLink>
+          </div>
+        </div>
+      )}
     </header>
   );
 };

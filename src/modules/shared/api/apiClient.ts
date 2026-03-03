@@ -1,5 +1,9 @@
 import type { Product, ProductCategory } from '../types/product';
 import type { ProductDetails } from '../types/productDetails';
+import {
+  detailsImagesOverrides,
+  productImageOverrides,
+} from '../config/imageOverrides';
 
 const BASE_URL = `${import.meta.env.BASE_URL}api`;
 
@@ -15,8 +19,14 @@ const fetchJson = async <T>(url: string): Promise<T> => {
   return response.json() as Promise<T>;
 };
 
-export const getProducts = (): Promise<Product[]> =>
-  fetchJson<Product[]>(`${BASE_URL}/products.json`);
+export const getProducts = async (): Promise<Product[]> => {
+  const products = await fetchJson<Product[]>(`${BASE_URL}/products.json`);
+
+  return products.map(product => ({
+    ...product,
+    image: productImageOverrides[product.itemId] ?? product.image,
+  }));
+};
 
 export const getProductDetails = async (
   category: ProductCategory,
@@ -25,9 +35,22 @@ export const getProductDetails = async (
   const items = await fetchJson<ProductDetails[]>(
     `${BASE_URL}/${category}.json`,
   );
+  const details = items.find(item => item.id === productId);
 
-  return items.find(item => item.id === productId) ?? null;
+  if (!details) {
+    return null;
+  }
+
+  return {
+    ...details,
+    images: detailsImagesOverrides[details.id] ?? details.images,
+  };
 };
+
+export const getCategoryProductDetails = (
+  category: ProductCategory,
+): Promise<ProductDetails[]> =>
+  fetchJson<ProductDetails[]>(`${BASE_URL}/${category}.json`);
 
 export const getSuggestedProducts = async (
   currentId: string,

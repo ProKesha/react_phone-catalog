@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { useCart } from '../shared/context';
 import { getProducts } from '../shared/api/apiClient';
@@ -15,6 +15,7 @@ type CartRow = {
 };
 
 export const CartPage = () => {
+  const navigate = useNavigate();
   const { cart, getTotalQuantity, increment, decrement, remove, clear } =
     useCart();
 
@@ -56,6 +57,14 @@ export const CartPage = () => {
   if (cart.length === 0) {
     return (
       <div className={styles.page}>
+        <button
+          type="button"
+          className={styles.backBtn}
+          onClick={() => navigate(-1)}
+        >
+          <span aria-hidden="true">‹</span> Back
+        </button>
+
         <h1 className={styles.title}>Cart</h1>
 
         <div className={styles.empty}>
@@ -76,6 +85,14 @@ export const CartPage = () => {
   if (error) {
     return (
       <div className={styles.page}>
+        <button
+          type="button"
+          className={styles.backBtn}
+          onClick={() => navigate(-1)}
+        >
+          <span aria-hidden="true">‹</span> Back
+        </button>
+
         <h1 className={styles.title}>Cart</h1>
 
         <p className={styles.errorText}>{error}</p>
@@ -89,6 +106,14 @@ export const CartPage = () => {
 
   return (
     <div className={styles.page}>
+      <button
+        type="button"
+        className={styles.backBtn}
+        onClick={() => navigate(-1)}
+      >
+        <span aria-hidden="true">‹</span> Back
+      </button>
+
       <h1 className={styles.title}>Cart</h1>
 
       <div className={styles.layout}>
@@ -106,7 +131,7 @@ export const CartPage = () => {
 
               <Link to={`/product/${id}`} className={styles.imageLink}>
                 <img
-                  src={`/${product.image}`}
+                  src={`${import.meta.env.BASE_URL}${product.image}`}
                   alt={product.name}
                   className={styles.itemImage}
                 />
