@@ -21,7 +21,6 @@
   align-items: stretch;
 }
 
-// ─── Logo ─────────────────────────────────────────────────────────────────────
 .logo {
   display: flex;
   align-items: center;
@@ -46,7 +45,6 @@
   }
 }
 
-// ─── Nav ──────────────────────────────────────────────────────────────────────
 .nav {
   display: flex;
   align-items: stretch;
@@ -67,7 +65,6 @@
   color: var(--color-secondary);
   position: relative;
 
-  // Active bottom bar
   &::after {
     content: '';
     position: absolute;
@@ -96,7 +93,6 @@
   }
 }
 
-// ─── Icon actions ─────────────────────────────────────────────────────────────
 .actions {
   display: flex;
   align-items: stretch;
@@ -106,7 +102,6 @@
   }
 }
 
-// svg opacity transition — shared for desktop and mobile icon links
 .iconLink svg,
 .mobileIconLink svg {
   transition: opacity var(--transition-base);
@@ -121,7 +116,6 @@
   color: var(--color-header-text);
   position: relative;
 
-  // Active bottom bar
   &::after {
     content: '';
     position: absolute;
@@ -144,7 +138,6 @@
   }
 }
 
-// ─── Hamburger (mobile only) ──────────────────────────────────────────────────
 .hamburger {
   display: none;
   align-items: center;
@@ -159,7 +152,6 @@
   }
 }
 
-// ─── Mobile menu overlay ──────────────────────────────────────────────────────
 .mobileMenu {
   position: fixed;
   inset: var(--header-height) 0 0 0;
@@ -240,7 +232,6 @@
   }
 }
 
-// ─── Search ───────────────────────────────────────────────────────────────────
 .search {
   display: flex;
   align-items: center;
@@ -268,7 +259,6 @@
     color: var(--color-secondary);
   }
 
-  // прибираємо нативну кнопку очищення в Chrome
   &::-webkit-search-cancel-button {
     display: none;
   }

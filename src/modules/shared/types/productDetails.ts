@@ -5,8 +5,6 @@ export type ProductDescription = {
   text: string[];
 };
 
-// All three categories share the same detail shape.
-// `camera` and `zoom` are absent in accessories — marked optional.
 export type ProductDetails = {
   id: string;
   category: ProductCategory;

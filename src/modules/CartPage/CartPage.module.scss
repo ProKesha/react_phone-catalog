@@ -35,7 +35,6 @@
   }
 }
 
-// ─── Empty state ───────────────────────────────────────────────────────────────
 .empty {
   display: flex;
   flex-direction: column;
@@ -63,7 +62,6 @@
   }
 }
 
-// ─── Error state ──────────────────────────────────────────────────────────────
 .errorText {
   color: var(--color-red);
   margin-bottom: 16px;
@@ -86,7 +84,6 @@
   }
 }
 
-// ─── Layout ───────────────────────────────────────────────────────────────────
 .layout {
   display: flex;
   flex-direction: column;
@@ -102,7 +99,6 @@
   }
 }
 
-// ─── Item list ────────────────────────────────────────────────────────────────
 .list {
   list-style: none;
   display: flex;
@@ -168,7 +164,6 @@
   }
 }
 
-// ─── Quantity controls ────────────────────────────────────────────────────────
 .controls {
   grid-area: controls;
   display: flex;
@@ -234,7 +229,6 @@
   }
 }
 
-// ─── Summary ──────────────────────────────────────────────────────────────────
 .summary {
   padding: 24px;
   border: 1px solid var(--color-border);

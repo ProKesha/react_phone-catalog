@@ -1,4 +1,3 @@
-// ─── Reset ────────────────────────────────────────────────────────────────────
 *,
 *::before,
 *::after {
@@ -7,7 +6,6 @@
   padding: 0;
 }
 
-// ─── Fonts ────────────────────────────────────────────────────────────────────
 @font-face {
   font-family: Mont;
   src: url('/fonts/Mont-Regular.otf') format('opentype');
@@ -29,9 +27,7 @@
   font-style: normal;
 }
 
-// ─── Design tokens ────────────────────────────────────────────────────────────
 :root {
-  // Palette
   --color-primary: #f1f2f9;
   --color-secondary: #89939a;
   --color-icons: #b4bdc3;
@@ -44,24 +40,15 @@
   --color-green: #27ae60;
   --color-accent: #905bff;
   --color-accent-hover: #a378ff;
-
-  // Header (dark theme)
   --color-header-bg: #0f1121;
   --color-header-text: #f1f2f9;
   --color-header-border: rgba(255, 255, 255, 0.12);
-
-  // Typography
   --font-base: Mont, 'Helvetica Neue', Arial, sans-serif;
-
-  // Timing
   --transition-base: 0.2s ease-in-out;
-
-  // Layout
   --content-max-width: 1200px;
   --header-height: 64px;
 }
 
-// ─── Base ─────────────────────────────────────────────────────────────────────
 html {
   scroll-behavior: smooth;
 }
@@ -95,7 +82,6 @@ ul {
   list-style: none;
 }
 
-// ─── Accessibility ────────────────────────────────────────────────────────────
 .visually-hidden {
   position: absolute;
   width: 1px;
@@ -108,7 +94,6 @@ ul {
   border: 0;
 }
 
-// ─── Global image scale +10% on hover (per spec) ──────────────────────────────
 a img,
 button img {
   transition: transform 0.3s ease-in-out;
@@ -119,7 +104,6 @@ button:hover img {
   transform: scale(1.1);
 }
 
-// ─── Smooth hover transitions on all interactive elements ─────────────────────
 a,
 button {
   transition:

@@ -4,7 +4,6 @@ import type { Product } from '../../types/product';
 import { useCart, useFavorites } from '../../context';
 import styles from './ProductCard.module.scss';
 
-// Extracted to comply with max-len: 80 lint rule
 const HEART_PATH =
   'M8 13c-.24 0-.47-.09-.65-.25C5.48 11.13 2 8.09 2 5.25 ' +
   '2 3.46 3.4 2 5.12 2 6.16 2 7.13 2.53 7.7 3.39L8 3.84l.3-.45' +
@@ -14,6 +13,7 @@ const HEART_PATH =
 type Props = {
   product: Product;
   showFullPrice?: boolean;
+  onOpen?: () => void;
 };
 
 type SpecRowProps = {
@@ -28,7 +28,11 @@ const SpecRow = ({ label, value }: SpecRowProps) => (
   </div>
 );
 
-export const ProductCard = ({ product, showFullPrice = true }: Props) => {
+export const ProductCard = ({
+  product,
+  showFullPrice = true,
+  onOpen,
+}: Props) => {
   const { itemId, name, image, price, fullPrice, screen, capacity, ram } =
     product;
 
@@ -42,6 +46,7 @@ export const ProductCard = ({ product, showFullPrice = true }: Props) => {
         to={`/product/${itemId}`}
         className={styles.imageLink}
         aria-label={name}
+        onClick={onOpen}
       >
         <img
           src={`${import.meta.env.BASE_URL}${image}`}
@@ -51,7 +56,7 @@ export const ProductCard = ({ product, showFullPrice = true }: Props) => {
         />
       </Link>
 
-      <Link to={`/product/${itemId}`} className={styles.name}>
+      <Link to={`/product/${itemId}`} className={styles.name} onClick={onOpen}>
         {name}
       </Link>
 

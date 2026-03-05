@@ -16,7 +16,6 @@ type Props = {
   category: ProductCategory;
 };
 
-// Частковий апдейт URL-параметрів
 type ParamsUpdate = {
   query?: string;
   sort?: SortKey;
@@ -41,7 +40,6 @@ const PER_PAGE_OPTIONS: PerPage[] = ['4', '8', '16', 'all'];
 const VALID_SORT: SortKey[] = ['age', 'title', 'price'];
 const VALID_PER_PAGE: PerPage[] = ['4', '8', '16', 'all'];
 
-// ─── Pure helpers ─────────────────────────────────────────────────────────────
 const getDiscountedPrice = (p: Product): number => p.price;
 
 const sortProducts = (list: Product[], sort: SortKey): Product[] => {
@@ -61,7 +59,6 @@ const sortProducts = (list: Product[], sort: SortKey): Product[] => {
 const paginate = <T,>(items: T[], page: number, perPage: number): T[] =>
   items.slice((page - 1) * perPage, page * perPage);
 
-// ─────────────────────────────────────────────────────────────────────────────
 export const ProductsPage = ({ category }: Props) => {
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -118,7 +115,6 @@ export const ProductsPage = ({ category }: Props) => {
     [perPage, sorted, clampedPage, perPageNum],
   );
 
-  // Clamp out-of-range page in URL after products load
   useEffect(() => {
     if (products && clampedPage !== page) {
       setSearchParams(
@@ -138,12 +134,6 @@ export const ProductsPage = ({ category }: Props) => {
     }
   }, [clampedPage, page, products, setSearchParams]);
 
-  // Оновлює URL-параметри з дотриманням правил чистоти URL:
-  // - query порожній → видалити
-  // - sort = 'age' (default) → видалити
-  // - perPage = '16' (default) → видалити; 'all' — зберігати явно
-  // - page = 1 → видалити
-  // - зміна query/sort/perPage → скинути page
   const setParams = (update: ParamsUpdate) => {
     setSearchParams(prev => {
       const next = new URLSearchParams(prev);
@@ -178,17 +168,14 @@ export const ProductsPage = ({ category }: Props) => {
         next.set('page', String(p));
       }
 
-      // при зміні query/sort/perPage скидаємо page на початок
       if ('sort' in update || 'perPage' in update || 'query' in update) {
         next.delete('page');
       }
 
-      // page=1 — зайвий параметр в URL
       if (next.get('page') === '1') {
         next.delete('page');
       }
 
-      // perPage=all → пагінація непотрібна
       if (next.get('perPage') === 'all') {
         next.delete('page');
       }

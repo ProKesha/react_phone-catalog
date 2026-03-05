@@ -1,9 +1,9 @@
 import styles from './Footer.module.scss';
 
-const GITHUB_REPO_URL = 'https://github.com/ProKesha/react-phone-catalog';
+const GITHUB_REPO_URL = 'https://github.com/ProKesha/react_phone-catalog';
 const GITHUB_PROFILE_URL = 'https://github.com/ProKesha';
 const LICENSE_URL =
-  'https://github.com/ProKesha/react-phone-catalog/blob/master/LICENSE';
+  'https://github.com/ProKesha/react_phone-catalog/blob/HEAD/LICENSE';
 
 const handleScrollToTop = () => {
   window.scrollTo({ top: 0, behavior: 'smooth' });

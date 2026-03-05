@@ -85,6 +85,54 @@ const findVariantId = (
   return match?.id ?? null;
 };
 
+const smoothScrollToTop = (duration = 700) => {
+  const startY = window.scrollY;
+  const root = document.documentElement;
+  const previousScrollBehavior = root.style.scrollBehavior;
+
+  if (startY <= 0) {
+    return () => {};
+  }
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    window.scrollTo(0, 0);
+
+    return () => {};
+  }
+
+  const startTime = performance.now();
+  let frameId = 0;
+
+  root.style.scrollBehavior = 'auto';
+
+  const easeInOutCubic = (t: number) =>
+    t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+  const tick = (now: number) => {
+    const elapsed = now - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = easeInOutCubic(progress);
+
+    window.scrollTo(0, startY * (1 - eased));
+
+    if (progress < 1) {
+      frameId = window.requestAnimationFrame(tick);
+    } else {
+      root.style.scrollBehavior = previousScrollBehavior;
+    }
+  };
+
+  frameId = window.requestAnimationFrame(tick);
+
+  return () => {
+    if (frameId) {
+      window.cancelAnimationFrame(frameId);
+    }
+
+    root.style.scrollBehavior = previousScrollBehavior;
+  };
+};
+
 export const ProductDetailsPage = () => {
   const { productId = '' } = useParams();
   const navigate = useNavigate();
@@ -120,7 +168,7 @@ export const ProductDetailsPage = () => {
     }
   }, [productId]);
 
-  const { data, loading, error, reload } = useAsync(fetchDetails, [productId]);
+  const { data, loading, error, reload } = useAsync(fetchDetails);
   const product = data?.product ?? null;
   const fallbackCategory = data?.category ?? null;
   const productCode = data?.productCode ?? null;
@@ -133,10 +181,8 @@ export const ProductDetailsPage = () => {
     return getSuggestedProducts(productId, product.category);
   }, [product, productId]);
 
-  const { data: suggested, loading: suggestedLoading } = useAsync(
-    fetchSuggested,
-    [productId, product?.id],
-  );
+  const { data: suggested, loading: suggestedLoading } =
+    useAsync(fetchSuggested);
 
   const [activeImage, setActiveImage] = useState('');
 
@@ -165,7 +211,11 @@ export const ProductDetailsPage = () => {
       }));
   }, [product]);
 
-  const { data: variants } = useAsync(fetchVariants, [product?.id]);
+  const { data: variants } = useAsync(fetchVariants);
+
+  useEffect(() => {
+    return smoothScrollToTop();
+  }, [productId]);
 
   useEffect(() => {
     if (product) {
@@ -173,7 +223,7 @@ export const ProductDetailsPage = () => {
     }
   }, [product]);
 
-  if (loading) {
+  if (loading && !product) {
     return <Loader />;
   }
 
@@ -259,6 +309,10 @@ export const ProductDetailsPage = () => {
     }
 
     navigate(`/product/${matchedId}`, { replace: true });
+  };
+
+  const handleSuggestedOpen = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const inCart = isInCart(product.id);
@@ -486,12 +540,13 @@ export const ProductDetailsPage = () => {
       </div>
 
       <section className={styles.suggested}>
-        {suggestedLoading && <Loader />}
-        {!suggestedLoading && suggested && (
+        {suggestedLoading && !suggested?.length && <Loader />}
+        {suggested && (
           <ProductsSlider
             title="You may also like"
             titleId="you-may-like-title"
             products={suggested}
+            onProductSelect={handleSuggestedOpen}
           />
         )}
       </section>

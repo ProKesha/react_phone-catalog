@@ -14,6 +14,7 @@ type Props = {
   titleId: string;
   products: Product[];
   showFullPrice?: boolean;
+  onProductSelect?: () => void;
 };
 
 export const ProductsSlider = ({
@@ -21,6 +22,7 @@ export const ProductsSlider = ({
   titleId,
   products,
   showFullPrice = true,
+  onProductSelect,
 }: Props) => {
   const trackRef = useRef<HTMLUListElement>(null);
 
@@ -95,7 +97,11 @@ export const ProductsSlider = ({
       <ul className={styles.track} ref={trackRef}>
         {products.map(product => (
           <li key={product.id} className={styles.item}>
-            <ProductCard product={product} showFullPrice={showFullPrice} />
+            <ProductCard
+              product={product}
+              showFullPrice={showFullPrice}
+              onOpen={onProductSelect}
+            />
           </li>
         ))}
       </ul>

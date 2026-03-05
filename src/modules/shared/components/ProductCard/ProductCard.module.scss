@@ -16,7 +16,6 @@
   }
 }
 
-// ─── Image ────────────────────────────────────────────────────────────────────
 .imageLink {
   display: flex;
   align-items: center;
@@ -30,13 +29,11 @@
   object-fit: contain;
   transition: transform 0.3s ease-in-out;
 
-  // Scale the image when the whole card is hovered (overrides global rule)
   .card:hover & {
     transform: scale(1.1);
   }
 }
 
-// ─── Name ─────────────────────────────────────────────────────────────────────
 .name {
   font-size: 14px;
   font-weight: 600;
@@ -53,7 +50,6 @@
   }
 }
 
-// ─── Prices ───────────────────────────────────────────────────────────────────
 .prices {
   display: flex;
   align-items: baseline;
@@ -74,14 +70,12 @@
   text-decoration: line-through;
 }
 
-// ─── Divider ──────────────────────────────────────────────────────────────────
 .divider {
   border: none;
   border-top: 1px solid var(--color-border);
   margin-bottom: 8px;
 }
 
-// ─── Specs ────────────────────────────────────────────────────────────────────
 .specs {
   flex: 1;
   display: flex;
@@ -106,7 +100,6 @@
   color: var(--color-primary);
 }
 
-// ─── Actions ──────────────────────────────────────────────────────────────────
 .actions {
   display: flex;
   gap: 8px;

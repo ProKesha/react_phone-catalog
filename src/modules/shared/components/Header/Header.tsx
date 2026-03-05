@@ -15,7 +15,6 @@ const NAV_LINKS = [
   { path: '/accessories', label: 'Accessories', end: false },
 ];
 
-// Маршрути де показується пошуковий рядок
 const SEARCH_ROUTES = ['/phones', '/tablets', '/accessories', '/favorites'];
 
 const SEARCH_PLACEHOLDER: Record<string, string> = {
@@ -65,7 +64,6 @@ export const Header = () => {
   const showSearch = SEARCH_ROUTES.includes(pathname);
   const placeholder = SEARCH_PLACEHOLDER[pathname] ?? 'Search...';
 
-  // Беремо поточне значення query з URL як початковий стан
   const urlQuery = searchParams.get('query') ?? '';
   const [inputValue, setInputValue] = useState(urlQuery);
   const debouncedValue = useDebounce(inputValue, 300);
@@ -74,16 +72,11 @@ export const Header = () => {
   const toggleMenu = () => setIsMenuOpen(prev => !prev);
   const closeMenu = () => setIsMenuOpen(false);
 
-  // При переході на іншу сторінку — синхронізуємо input і закриваємо меню
   useEffect(() => {
     setInputValue(searchParams.get('query') ?? '');
     setIsMenuOpen(false);
-    // тут навмисно не додаємо searchParams у deps —
-    // ефект потрібен тільки при зміні pathname
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname]);
+  }, [pathname, searchParams]);
 
-  // Після debounce — записуємо query в URL
   useEffect(() => {
     if (!showSearch) {
       return;

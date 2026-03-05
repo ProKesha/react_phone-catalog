@@ -14,7 +14,6 @@ const SLIDES = [
   { src: `${BASE}img/banners/slide-3.png`, alt: 'New accessories' },
 ];
 
-// chevron paths for prev/next buttons
 const PREV_PATH = 'M11 2L5 8l6 6';
 const NEXT_PATH = 'M5 2l6 6-6 6';
 
@@ -22,7 +21,6 @@ export const PicturesSlider = () => {
   const [index, setIndex] = useState(0);
   const count = SLIDES.length;
 
-  // autoplay: advance every 5s, cleanup on unmount
   useEffect(() => {
     const timer = setInterval(() => {
       setIndex(i => (i + 1) % count);
