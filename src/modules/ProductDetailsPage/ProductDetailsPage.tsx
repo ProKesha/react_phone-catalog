@@ -7,9 +7,10 @@ import {
   getProducts,
   getSuggestedProducts,
 } from '../shared/api/apiClient';
+import { ProductsSlider } from '../shared/components/ProductsSlider';
 import { useAsync } from '../shared/hooks/useAsync';
 import { Loader } from '../shared/components/Loader';
-import { ProductCard } from '../shared/components/ProductCard';
+import { useCart, useFavorites } from '../shared/context';
 import type { ProductCategory } from '../shared/types/product';
 import type { ProductDetails } from '../shared/types/productDetails';
 import styles from './ProductDetailsPage.module.scss';
@@ -52,10 +53,17 @@ type VariantItem = {
 type DetailsPayload = {
   product: ProductDetails | null;
   category: ProductCategory | null;
+  productCode: number | null;
 };
 
 const normalizeVariantValue = (value: string): string =>
   value.toLowerCase().replace(/[\s-]/g, '');
+
+const HEART_PATH =
+  'M8 13c-.24 0-.47-.09-.65-.25C5.48 11.13 2 8.09 2 5.25 ' +
+  '2 3.46 3.4 2 5.12 2 6.16 2 7.13 2.53 7.7 3.39L8 3.84l.3-.45' +
+  'C8.87 2.53 9.84 2 10.88 2 12.6 2 14 3.46 14 5.25c0 2.84-3.48 ' +
+  '5.88-5.35 7.5-.18.16-.41.25-.65.25z';
 
 const findVariantId = (
   namespaceId: string,
@@ -80,26 +88,32 @@ const findVariantId = (
 export const ProductDetailsPage = () => {
   const { productId = '' } = useParams();
   const navigate = useNavigate();
+  const { isInCart, add } = useCart();
+  const { isFavorite, toggle } = useFavorites();
 
   const fetchDetails = useCallback(async (): Promise<DetailsPayload> => {
     if (!productId) {
-      return { product: null, category: null };
+      return { product: null, category: null, productCode: null };
     }
 
     const products = await getProducts();
     const base = products.find(p => p.itemId === productId);
 
     if (!base) {
-      return { product: null, category: null };
+      return { product: null, category: null, productCode: null };
     }
 
     try {
       const details = await getProductDetails(base.category, productId);
 
-      return { product: details, category: base.category };
+      return {
+        product: details,
+        category: base.category,
+        productCode: base.id,
+      };
     } catch (err: unknown) {
       if (err instanceof Error && err.message.includes('404')) {
-        return { product: null, category: base.category };
+        return { product: null, category: base.category, productCode: null };
       }
 
       throw err;
@@ -109,6 +123,7 @@ export const ProductDetailsPage = () => {
   const { data, loading, error, reload } = useAsync(fetchDetails, [productId]);
   const product = data?.product ?? null;
   const fallbackCategory = data?.category ?? null;
+  const productCode = data?.productCode ?? null;
 
   const fetchSuggested = useCallback(async () => {
     if (!product) {
@@ -246,12 +261,11 @@ export const ProductDetailsPage = () => {
     navigate(`/product/${matchedId}`, { replace: true });
   };
 
+  const inCart = isInCart(product.id);
+  const favorite = isFavorite(product.id);
+
   return (
     <div className={styles.page}>
-      <button type="button" className={styles.backBtn} onClick={handleBack}>
-        ← Back
-      </button>
-
       <nav aria-label="Breadcrumb" className={styles.breadcrumb}>
         <Link to="/" className={styles.breadcrumbLink}>
           Home
@@ -264,64 +278,13 @@ export const ProductDetailsPage = () => {
         <span className={styles.breadcrumbCurrent}>{product.name}</span>
       </nav>
 
+      <button type="button" className={styles.backBtn} onClick={handleBack}>
+        ← Back
+      </button>
+
       <h1 className={styles.title}>{product.name}</h1>
 
-      <div className={styles.selectors}>
-        <div className={styles.selectorGroup}>
-          <p className={styles.selectorLabel}>Available colors</p>
-          <ul className={styles.colorList}>
-            {product.colorsAvailable.map(color => (
-              <li key={color}>
-                <input
-                  id={`color-${color}`}
-                  type="radio"
-                  name="product-color"
-                  value={color}
-                  checked={color === product.color}
-                  onChange={() => handleVariantChange(color, product.capacity)}
-                  className={styles.colorInput}
-                />
-                <label
-                  htmlFor={`color-${color}`}
-                  className={styles.colorBtn}
-                  style={{
-                    backgroundColor: COLOR_MAP[color] ?? '#ccc',
-                  }}
-                >
-                  <span className="visually-hidden">{color}</span>
-                </label>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className={styles.selectorGroup}>
-          <p className={styles.selectorLabel}>Select capacity</p>
-          <ul className={styles.capacityList}>
-            {product.capacityAvailable.map(cap => (
-              <li key={cap}>
-                <input
-                  id={`capacity-${cap}`}
-                  type="radio"
-                  name="product-capacity"
-                  value={cap}
-                  checked={cap === product.capacity}
-                  onChange={() => handleVariantChange(product.color, cap)}
-                  className={styles.capacityInput}
-                />
-                <label
-                  htmlFor={`capacity-${cap}`}
-                  className={styles.capacityBtn}
-                >
-                  {cap}
-                </label>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-
-      <div className={styles.gallery}>
+      <div className={styles.hero}>
         <ul className={styles.thumbnails}>
           {product.images.map(img => (
             <li key={img}>
@@ -349,54 +312,187 @@ export const ProductDetailsPage = () => {
             alt={product.name}
           />
         </div>
+
+        <div className={styles.details}>
+          <div className={styles.selectors}>
+            <div className={styles.selectorGroup}>
+              <div className={styles.selectorHeader}>
+                <p className={styles.selectorLabel}>Available colors</p>
+                {productCode && (
+                  <p className={styles.productCode}>ID: {productCode}</p>
+                )}
+              </div>
+              <ul className={styles.colorList}>
+                {product.colorsAvailable.map(color => (
+                  <li key={color}>
+                    <input
+                      id={`color-${color}`}
+                      type="radio"
+                      name="product-color"
+                      value={color}
+                      checked={color === product.color}
+                      onChange={() =>
+                        handleVariantChange(color, product.capacity)
+                      }
+                      className={styles.colorInput}
+                    />
+                    <label
+                      htmlFor={`color-${color}`}
+                      className={styles.colorBtn}
+                      style={{
+                        backgroundColor: COLOR_MAP[color] ?? '#ccc',
+                      }}
+                    >
+                      <span className="visually-hidden">{color}</span>
+                    </label>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className={styles.selectorGroup}>
+              <p className={styles.selectorLabel}>Select capacity</p>
+              <ul className={styles.capacityList}>
+                {product.capacityAvailable.map(cap => (
+                  <li key={cap}>
+                    <input
+                      id={`capacity-${cap}`}
+                      type="radio"
+                      name="product-capacity"
+                      value={cap}
+                      checked={cap === product.capacity}
+                      onChange={() => handleVariantChange(product.color, cap)}
+                      className={styles.capacityInput}
+                    />
+                    <label
+                      htmlFor={`capacity-${cap}`}
+                      className={styles.capacityBtn}
+                    >
+                      {cap}
+                    </label>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          <div className={styles.priceRow}>
+            <span className={styles.priceDiscount}>
+              ${product.priceDiscount}
+            </span>
+            <span className={styles.priceRegular}>${product.priceRegular}</span>
+          </div>
+
+          <div className={styles.actions}>
+            <button
+              type="button"
+              className={
+                inCart
+                  ? `${styles.cartButton} ${styles.cartButtonAdded}`
+                  : styles.cartButton
+              }
+              disabled={inCart}
+              onClick={() => add(product.id)}
+            >
+              {inCart ? 'Added to cart' : 'Add to cart'}
+            </button>
+
+            <button
+              type="button"
+              className={
+                favorite
+                  ? `${styles.favoriteButton} ${styles.favoriteButtonActive}`
+                  : styles.favoriteButton
+              }
+              aria-label={`Add ${product.name} to favorites`}
+              onClick={() => toggle(product.id)}
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="none"
+                aria-hidden="true"
+              >
+                <path
+                  d={HEART_PATH}
+                  stroke="currentColor"
+                  strokeWidth="1.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </button>
+          </div>
+
+          <div className={styles.shortSpecs}>
+            <div className={styles.shortSpecRow}>
+              <span className={styles.shortSpecLabel}>Screen</span>
+              <span className={styles.shortSpecValue}>{product.screen}</span>
+            </div>
+            <div className={styles.shortSpecRow}>
+              <span className={styles.shortSpecLabel}>Resolution</span>
+              <span className={styles.shortSpecValue}>
+                {product.resolution}
+              </span>
+            </div>
+            <div className={styles.shortSpecRow}>
+              <span className={styles.shortSpecLabel}>Processor</span>
+              <span className={styles.shortSpecValue}>{product.processor}</span>
+            </div>
+            <div className={styles.shortSpecRow}>
+              <span className={styles.shortSpecLabel}>RAM</span>
+              <span className={styles.shortSpecValue}>{product.ram}</span>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <section className={styles.about}>
-        <h2 className={styles.aboutTitle}>About</h2>
-        {product.description.map(section => (
-          <div key={section.title} className={styles.aboutSection}>
-            <h3 className={styles.aboutSectionTitle}>{section.title}</h3>
-            {section.text.map(paragraph => (
-              <p key={paragraph} className={styles.aboutText}>
-                {paragraph}
-              </p>
-            ))}
-          </div>
-        ))}
-      </section>
+      <div className={styles.infoGrid}>
+        <section className={styles.about}>
+          <h2 className={styles.aboutTitle}>About</h2>
+          {product.description.map(section => (
+            <div key={section.title} className={styles.aboutSection}>
+              <h3 className={styles.aboutSectionTitle}>{section.title}</h3>
+              {section.text.map(paragraph => (
+                <p key={paragraph} className={styles.aboutText}>
+                  {paragraph}
+                </p>
+              ))}
+            </div>
+          ))}
+        </section>
 
-      <section className={styles.techSpecs}>
-        <h2 className={styles.techSpecsTitle}>Tech specs</h2>
-        {[
-          { label: 'Screen', value: product.screen },
-          { label: 'Resolution', value: product.resolution },
-          { label: 'Processor', value: product.processor },
-          { label: 'RAM', value: product.ram },
-          { label: 'Capacity', value: product.capacity },
-          ...(product.camera
-            ? [{ label: 'Camera', value: product.camera }]
-            : []),
-          ...(product.zoom ? [{ label: 'Zoom', value: product.zoom }] : []),
-          { label: 'Cell', value: product.cell.join(', ') },
-        ].map(({ label, value }) => (
-          <div key={label} className={styles.specRow}>
-            <span className={styles.specLabel}>{label}</span>
-            <span className={styles.specValue}>{value}</span>
-          </div>
-        ))}
-      </section>
+        <section className={styles.techSpecs}>
+          <h2 className={styles.techSpecsTitle}>Tech specs</h2>
+          {[
+            { label: 'Screen', value: product.screen },
+            { label: 'Resolution', value: product.resolution },
+            { label: 'Processor', value: product.processor },
+            { label: 'RAM', value: product.ram },
+            { label: 'Capacity', value: product.capacity },
+            ...(product.camera
+              ? [{ label: 'Camera', value: product.camera }]
+              : []),
+            ...(product.zoom ? [{ label: 'Zoom', value: product.zoom }] : []),
+            { label: 'Cell', value: product.cell.join(', ') },
+          ].map(({ label, value }) => (
+            <div key={label} className={styles.specRow}>
+              <span className={styles.specLabel}>{label}</span>
+              <span className={styles.specValue}>{value}</span>
+            </div>
+          ))}
+        </section>
+      </div>
 
       <section className={styles.suggested}>
-        <h2 className={styles.suggestedTitle}>You may also like</h2>
         {suggestedLoading && <Loader />}
         {!suggestedLoading && suggested && (
-          <ul className={styles.suggestedList}>
-            {suggested.map(item => (
-              <li key={item.itemId} className={styles.suggestedItem}>
-                <ProductCard product={item} />
-              </li>
-            ))}
-          </ul>
+          <ProductsSlider
+            title="You may also like"
+            titleId="you-may-like-title"
+            products={suggested}
+          />
         )}
       </section>
     </div>

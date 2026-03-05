@@ -13,9 +13,15 @@ type Props = {
   title: string;
   titleId: string;
   products: Product[];
+  showFullPrice?: boolean;
 };
 
-export const ProductsSlider = ({ title, titleId, products }: Props) => {
+export const ProductsSlider = ({
+  title,
+  titleId,
+  products,
+  showFullPrice = true,
+}: Props) => {
   const trackRef = useRef<HTMLUListElement>(null);
 
   const scroll = (dir: 1 | -1) => {
@@ -89,7 +95,7 @@ export const ProductsSlider = ({ title, titleId, products }: Props) => {
       <ul className={styles.track} ref={trackRef}>
         {products.map(product => (
           <li key={product.id} className={styles.item}>
-            <ProductCard product={product} />
+            <ProductCard product={product} showFullPrice={showFullPrice} />
           </li>
         ))}
       </ul>

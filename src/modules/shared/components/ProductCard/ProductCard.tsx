@@ -13,6 +13,7 @@ const HEART_PATH =
 
 type Props = {
   product: Product;
+  showFullPrice?: boolean;
 };
 
 type SpecRowProps = {
@@ -27,13 +28,13 @@ const SpecRow = ({ label, value }: SpecRowProps) => (
   </div>
 );
 
-export const ProductCard = ({ product }: Props) => {
+export const ProductCard = ({ product, showFullPrice = true }: Props) => {
   const { itemId, name, image, price, fullPrice, screen, capacity, ram } =
     product;
 
   const { isFavorite, toggle } = useFavorites();
   const { isInCart, add } = useCart();
-  const hasDiscount = fullPrice > price;
+  const hasDiscount = showFullPrice && fullPrice > price;
 
   return (
     <article className={styles.card}>
