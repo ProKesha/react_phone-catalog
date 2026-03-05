@@ -75,6 +75,7 @@ export const HomePage = () => {
               title="Brand new models"
               titleId="brand-new-title"
               products={brandNewProducts}
+              showFullPrice={false}
             />
           )}
         </section>

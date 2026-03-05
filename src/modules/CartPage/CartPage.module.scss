@@ -124,7 +124,7 @@
   border: 1px solid transparent;
 
   @media (min-width: 900px) {
-    grid-template-columns: 16px 66px 1fr auto auto;
+    grid-template-columns: 16px 66px minmax(0, 1fr) 112px 120px;
     grid-template-areas: 'remove image name controls price';
     row-gap: 0;
     padding: 24px;
@@ -175,9 +175,11 @@
   align-items: center;
   gap: 13px;
   justify-self: start;
+  width: 100%;
+  justify-content: center;
 
   @media (min-width: 900px) {
-    justify-self: end;
+    justify-self: stretch;
   }
 }
 
@@ -224,6 +226,8 @@
   white-space: nowrap;
   line-height: 1;
   justify-self: end;
+  width: 100%;
+  text-align: right;
 
   @media (max-width: 639px) {
     font-size: 30px;
