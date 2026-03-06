@@ -1,13 +1,19 @@
+.wrapper {
+  width: 100%;
+}
+
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 16px;
   margin-bottom: 24px;
 }
 
 .title {
   font-size: 22px;
   font-weight: 800;
+  line-height: 1.4;
   color: var(--color-primary);
 
   @media (max-width: 639px) {
@@ -19,6 +25,7 @@
 .controls {
   display: flex;
   gap: 8px;
+  flex-shrink: 0;
 }
 
 .ctrlBtn {
@@ -42,11 +49,26 @@
   }
 }
 
+.ctrlBtnDisabled {
+  color: var(--color-icons);
+  background: transparent;
+  border-color: var(--color-border);
+  cursor: default;
+  pointer-events: none;
+}
+
 .track {
+  --desktop-track-shift: 0px;
+
   display: flex;
+  align-items: stretch;
   gap: 16px;
   overflow-x: auto;
   scrollbar-width: none;
+
+  @media (min-width: 1200px) {
+    margin-left: var(--desktop-track-shift);
+  }
 
   &::-webkit-scrollbar {
     display: none;

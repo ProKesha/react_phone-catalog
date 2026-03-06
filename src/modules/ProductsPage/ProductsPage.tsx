@@ -1,5 +1,5 @@
 import { type ChangeEvent, useCallback, useEffect, useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import cn from 'classnames';
 
 import { getProducts } from '../shared/api/apiClient';
@@ -24,6 +24,12 @@ type ParamsUpdate = {
 };
 
 const TITLES: Record<ProductCategory, string> = {
+  phones: 'Mobile phones',
+  tablets: 'Tablets',
+  accessories: 'Accessories',
+};
+
+const BREADCRUMB_LABELS: Record<ProductCategory, string> = {
   phones: 'Phones',
   tablets: 'Tablets',
   accessories: 'Accessories',
@@ -230,6 +236,39 @@ export const ProductsPage = ({ category }: Props) => {
 
   return (
     <div className={styles.page}>
+      <nav aria-label="Breadcrumb" className={styles.breadcrumb}>
+        <Link to="/" className={styles.breadcrumbLink}>
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M2.5 7.5L8 3l5.5 4.5"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M4.5 6.5V12.5H11.5V6.5"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </Link>
+        <span className={styles.breadcrumbSep} aria-hidden="true">
+          &gt;
+        </span>
+        <span className={styles.breadcrumbCurrent}>
+          {BREADCRUMB_LABELS[category]}
+        </span>
+      </nav>
+
       <h1 className={styles.title}>{TITLES[category]}</h1>
       <p className={styles.count}>{totalItems} models</p>
 
@@ -241,7 +280,7 @@ export const ProductsPage = ({ category }: Props) => {
           <div className={styles.selectWrapper}>
             <select
               id="sort-select"
-              className={styles.select}
+              className={`${styles.select} ${styles.selectWide}`}
               value={sort}
               onChange={handleSortChange}
             >
@@ -261,7 +300,7 @@ export const ProductsPage = ({ category }: Props) => {
           <div className={styles.selectWrapper}>
             <select
               id="per-page-select"
-              className={styles.select}
+              className={`${styles.select} ${styles.selectNarrow}`}
               value={perPage}
               onChange={handlePerPageChange}
             >

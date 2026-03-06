@@ -34,67 +34,78 @@ export const PicturesSlider = () => {
 
   return (
     <div className={styles.slider}>
-      <div
-        className={styles.track}
-        style={{ transform: `translateX(-${index * 100}%)` }}
-      >
-        {SLIDES.map(slide => (
-          <div key={slide.src} className={styles.slide}>
-            <picture>
-              {slide.mobileSrc && (
-                <source media="(max-width: 639px)" srcSet={slide.mobileSrc} />
-              )}
-              <img src={slide.src} alt={slide.alt} className={styles.image} />
-            </picture>
+      <div className={styles.content}>
+        <button
+          type="button"
+          className={styles.prevBtn}
+          aria-label="Previous slide"
+          onClick={prev}
+        >
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d={PREV_PATH}
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </button>
+
+        <div className={styles.viewport}>
+          <div
+            className={styles.track}
+            style={{ transform: `translateX(-${index * 100}%)` }}
+          >
+            {SLIDES.map(slide => (
+              <div key={slide.src} className={styles.slide}>
+                <picture className={styles.picture}>
+                  {slide.mobileSrc && (
+                    <source
+                      media="(max-width: 639px)"
+                      srcSet={slide.mobileSrc}
+                    />
+                  )}
+                  <img
+                    src={slide.src}
+                    alt={slide.alt}
+                    className={styles.image}
+                  />
+                </picture>
+              </div>
+            ))}
           </div>
-        ))}
+        </div>
+
+        <button
+          type="button"
+          className={styles.nextBtn}
+          aria-label="Next slide"
+          onClick={next}
+        >
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d={NEXT_PATH}
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </button>
       </div>
-
-      <button
-        type="button"
-        className={styles.prevBtn}
-        aria-label="Previous slide"
-        onClick={prev}
-      >
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 16 16"
-          fill="none"
-          aria-hidden="true"
-        >
-          <path
-            d={PREV_PATH}
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </button>
-
-      <button
-        type="button"
-        className={styles.nextBtn}
-        aria-label="Next slide"
-        onClick={next}
-      >
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 16 16"
-          fill="none"
-          aria-hidden="true"
-        >
-          <path
-            d={NEXT_PATH}
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </button>
 
       <div className={styles.dots} role="tablist" aria-label="Slides">
         {SLIDES.map((slide, i) => (

@@ -17,16 +17,25 @@
 
 .picturesSlider {
   width: 100%;
-  margin-bottom: 80px;
+  margin-bottom: 56px;
+
+  @media (min-width: 640px) {
+    margin-bottom: 64px;
+  }
 }
 
 .container {
   max-width: var(--content-max-width);
   margin: 0 auto;
   padding: 0 16px;
+
+  @media (min-width: 1200px) {
+    max-width: 1360px;
+  }
 }
 
 .section {
+  width: 100%;
   margin-bottom: 80px;
 
   &:last-child {
